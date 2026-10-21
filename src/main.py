@@ -72,6 +72,7 @@ def process_service(settings: Settings, log: logging.Logger, state: State,
                   f"(thresholds mean >= {settings.min_mean_volume_db}, peak >= {settings.min_peak_volume_db}). "
                   "Likely a silent / very low-gain recording. Not transcribed "
                   "(Whisper hallucinates on silence) and NOT published.")
+        log.warning("Service %s -> review: %s", sid, reason)
         save_to_review(settings, folder, reason, {"service_full.mp3": full_mp3})
         state.mark_service(sid, "review", {"reason": "volume_gate"})
         return "review"
@@ -80,6 +81,7 @@ def process_service(settings: Settings, log: logging.Logger, state: State,
     full_segments = transcribe_file(settings, full_mp3, settings.whisper_pass1_model)
     (work / "full_segments.json").write_text(json.dumps(full_segments, indent=2), encoding="utf-8")
     if not full_segments:
+        log.warning("Service %s -> review: Pass 1 transcription produced no speech segments.", sid)
         save_to_review(settings, folder, "Pass 1 transcription produced no speech segments.",
                        {"service_full.mp3": full_mp3})
         state.mark_service(sid, "review", {"reason": "no_speech"})
@@ -89,6 +91,7 @@ def process_service(settings: Settings, log: logging.Logger, state: State,
     if span is None or span.confidence < settings.min_homily_confidence:
         reason = ("Homily detection confidence too low to publish automatically. "
                   f"Span: {span}; threshold {settings.min_homily_confidence}.")
+        log.warning("Service %s -> review: %s", sid, reason)
         save_to_review(settings, folder, reason,
                        {"full_segments.json": json.dumps(full_segments, indent=2),
                         "service_full.mp3": full_mp3})
@@ -173,31 +176,37 @@ def main() -> int:
             log.error("Config: %s", problem)
         return 2
 
+    # FTP sessions are kept SHORT on purpose: the recorder drops idle
+    # control connections after a few minutes, and one transcription
+    # pass takes ~8 minutes - a session held across processing dies
+    # (WinError 10053, seen live 2026-10-21). So: one session to list,
+    # then a fresh session per service just to download its chunks.
     with FtpRecorder(settings) as recorder:
         all_files = recorder.list_mp3s()
-        log.info("Recorder holds %d parseable MP3 chunk(s).", len(all_files))
-        sunday_files = files_for_date(all_files, target)
-        services = group_into_services(sunday_files, settings.service_gap_minutes)
-        log.info("%d chunk(s) match %s -> %d service(s).", len(sunday_files), target, len(services))
-        for service in services:
-            log.info("  %s", service.label)
+    log.info("Recorder holds %d parseable MP3 chunk(s).", len(all_files))
+    sunday_files = files_for_date(all_files, target)
+    services = group_into_services(sunday_files, settings.service_gap_minutes)
+    log.info("%d chunk(s) match %s -> %d service(s).", len(sunday_files), target, len(services))
+    for service in services:
+        log.info("  %s", service.label)
 
-        if args.dry_run:
-            log.info("Dry run - nothing downloaded or processed.")
-            return 0
+    if args.dry_run:
+        log.info("Dry run - nothing downloaded or processed.")
+        return 0
 
-        for service in services:
-            if state.service_done(service.service_id) and not args.force:
-                log.info("Skipping %s - already completed (use --force to redo).", service.service_id)
-                continue
+    for service in services:
+        if state.service_done(service.service_id) and not args.force:
+            log.info("Skipping %s - already completed (use --force to redo).", service.service_id)
+            continue
+        try:
             chunk_dir = settings.work_dir / "downloads" / service.service_id
-            local_chunks = [recorder.download(f, chunk_dir) for f in service.files]
-            try:
-                outcome = process_service(settings, log, state, service, local_chunks)
-                log.info("Service %s: %s", service.service_id, outcome)
-            except Exception as exc:
-                log.exception("Service %s FAILED: %s", service.service_id, exc)
-                state.mark_service(service.service_id, "failed", {"error": str(exc)})
+            with FtpRecorder(settings) as recorder:
+                local_chunks = [recorder.download(f, chunk_dir) for f in service.files]
+            outcome = process_service(settings, log, state, service, local_chunks)
+            log.info("Service %s: %s", service.service_id, outcome)
+        except Exception as exc:
+            log.exception("Service %s FAILED: %s", service.service_id, exc)
+            state.mark_service(service.service_id, "failed", {"error": str(exc)})
     return 0
 
 
