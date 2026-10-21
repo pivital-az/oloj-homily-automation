@@ -1,0 +1,9 @@
+# Core pipeline - all local processing
+python-dotenv>=1.0,<2.0
+faster-whisper>=1.0,<2.0
+# Pin PyAV: newer av releases broke faster-whisper's decode_audio()
+# (metadata_errors kwarg). 12.x is the tested line on Windows.
+av>=12,<14
+huggingface-hub>=0.23
+mutagen>=1.47
+requests>=2.32

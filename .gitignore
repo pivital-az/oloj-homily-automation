@@ -1,0 +1,13 @@
+.env
+.venv/
+__pycache__/
+*.py[cod]
+models/*
+!models/.gitkeep
+work/
+review/
+logs/
+data/
+*.log
+.idea/
+.vscode/
