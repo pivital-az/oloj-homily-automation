@@ -7,10 +7,14 @@ Strategy (rules first, optional local LLM second - never a cloud call):
      clipping the Gospel reading itself when the homily later quotes it
      (the example homily summarises the Gospel parable at length).
   2. The homily ends at the first post-homily liturgy marker: the Creed
-     ("i believe in one god"), the prayers of the faithful, or the
-     homily's own closing transition ("as we continue with this mass" /
-     "as we continue our celebration") - in that last case the homily
-     ends at the end of that paragraph.
+     (either form, opening or body phrases - unison recitation
+     transcribes poorly), the prayers of the faithful, the offertory,
+     or the homily's own closing transition ("as we continue with this
+     mass" / "as we continue our celebration"). Markers are searched
+     across a rolling multi-segment window because Whisper splits
+     sentences arbitrarily. If NO marker matches, fall back to the
+     first long silence (>= 25 s, >= 6 min into the homily) as an
+     inferred end, flagged in the span notes.
   3. Sanity checks: duration 3-35 minutes and sustained single-topic
      speech raise/lower a confidence score. Below the configured
      threshold the caller must route the service to review instead of
@@ -38,11 +42,28 @@ HOMILY_CLOSE_MARKERS = (
     "as we continue this celebration",
 )
 POST_HOMILY_MARKERS = (
+    # Nicene Creed (opening and unmistakable body phrases - unison
+    # recitation transcribes poorly with the small model, so any of
+    # these is enough to know the Creed, hence post-homily, region
+    # has begun).
     "i believe in one god",
-    "i believe in one, holy, catholic",
+    "maker of heaven and earth",
+    "conceived by the holy spirit",
+    "suffered under pontius pilate",
+    # Apostles' Creed.
+    "i believe in god the father almighty",
+    "i believe in god, the father almighty",
+    "born of the virgin mary",
+    # Prayers of the faithful.
     "let us pray for",
     "prayers of the faithful",
+    "lord hear our prayer",
     "lord, hear our prayer",
+    "we pray to the lord",
+    # Offertory / Liturgy of the Eucharist.
+    "blessed are you lord god of all creation",
+    "blessed are you, lord god of all creation",
+    "fruit of the earth and work of human hands",
 )
 
 
@@ -63,21 +84,54 @@ class HomilySpan:
         return self.end_s - self.start_s
 
 
+def _window_text(segments: list[dict], i: int, window: int = 3) -> str:
+    """Normalized text of segments i..i+window-1 joined. Whisper cuts
+    sentences wherever it likes - 'I believe in one' and 'God, the
+    Father almighty...' routinely land in ADJACENT segments, so a
+    marker searched in single segments only is easy to miss."""
+    return _norm(" ".join(s["text"] for s in segments[i:i + window]))
+
+
 def _find_last_marker(segments: list[dict], markers: tuple[str, ...],
                       before_s: float | None = None) -> int | None:
+    """Index of (approximately) the last segment of the last match.
+    A phrase split across two segments resolves to the second one -
+    close enough for a start boundary, since a pause and usually the
+    'Praise to you...' response sit between Gospel and homily."""
     found = None
     for i, seg in enumerate(segments):
         if before_s is not None and seg["start"] > before_s:
             break
         if any(m in _norm(seg["text"]) for m in markers):
             found = i
+        elif any(m in _window_text(segments, i, window=2) for m in markers):
+            found = min(i + 1, len(segments) - 1)
     return found
 
 
 def _find_first_marker(segments: list[dict], markers: tuple[str, ...],
                        from_index: int) -> int | None:
+    """Index of the FIRST segment participating in a marker match."""
     for i in range(from_index, len(segments)):
-        if any(m in _norm(segments[i]["text"]) for m in markers):
+        if any(m in _window_text(segments, i) for m in markers):
+            return i
+    return None
+
+
+def _first_long_gap(segments: list[dict], from_index: int,
+                    homily_start_s: float, min_after_s: float = 360.0,
+                    min_gap_s: float = 25.0) -> int | None:
+    """Index of the last segment before the first long silence that
+    begins at least min_after_s into the homily, with real content
+    still following it. A homily is continuous speech; the pause
+    before the Creed / the quiet under the offertory is the natural
+    boundary when no text marker matched."""
+    for i in range(from_index, len(segments) - 1):
+        if segments[i]["end"] - homily_start_s < min_after_s:
+            continue
+        gap = segments[i + 1]["start"] - segments[i]["end"]
+        content_after = segments[-1]["end"] - segments[i + 1]["start"]
+        if gap >= min_gap_s and content_after >= 60.0:
             return i
     return None
 
@@ -113,9 +167,20 @@ def detect_homily_rules(segments: list[dict]) -> HomilySpan | None:
         notes.append(f"End set at homily closing transition at {segments[close_idx]['start']:.0f}s.")
         confidence += 0.20
     else:
-        end_idx = len(segments) - 1
-        notes.append("No end marker found; homily assumed to run to a later break - review advised.")
-        confidence -= 0.10
+        gap_idx = _first_long_gap(segments, start_idx,
+                                  float(segments[start_idx]["start"]))
+        if gap_idx is not None:
+            end_idx = gap_idx
+            notes.append(
+                f"No end marker found; end set at the first long silence "
+                f"({segments[gap_idx + 1]['start'] - segments[gap_idx]['end']:.0f}s) "
+                f"after the homily, at {segments[gap_idx]['end']:.0f}s - inferred boundary.")
+            # Neutral: a solid Gospel-anchored start plus a structural
+            # end is publishable, but flagged in the notes.
+        else:
+            end_idx = len(segments) - 1
+            notes.append("No end marker found; homily assumed to run to a later break - review advised.")
+            confidence -= 0.10
 
     if end_idx < start_idx:
         return None
