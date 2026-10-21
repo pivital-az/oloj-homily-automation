@@ -35,4 +35,20 @@ if ($DryRun) { $ArgsList += "--dry-run" }
 if ($Force)  { $ArgsList += "--force" }
 
 & $VenvPython @ArgsList
-exit $LASTEXITCODE
+$PipelineExit = $LASTEXITCODE
+
+# After a successful real run, publish any new podcast episodes the
+# run wrote into docs\ (GitHub Pages). The publish script no-ops
+# cleanly when there is nothing new, and a publish failure must not
+# mask the pipeline's own result - the episodes are safe on disk and
+# the next run (or a manual publish_pages.ps1) retries the push.
+if ($PipelineExit -eq 0 -and -not $DryRun) {
+    try {
+        & (Join-Path $RepoRoot "scripts\publish_pages.ps1")
+        if ($LASTEXITCODE -ne 0) { throw "publish_pages.ps1 exited $LASTEXITCODE" }
+    } catch {
+        Write-Warning "Podcast publish step failed: $_ - new episodes are in docs\audio on this laptop; run .\scripts\publish_pages.ps1 by hand to retry."
+    }
+}
+
+exit $PipelineExit
