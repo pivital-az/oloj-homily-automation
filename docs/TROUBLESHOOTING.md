@@ -20,16 +20,27 @@ ignore the stub. If you still land here:
 
 1603 is the Windows Installer generic "fatal error during
 installation." The download and hash check succeeded — the installer
-itself refused. Most common causes, in order:
+itself refused. **No reboot is required for any of this** (and on the
+parish laptop a reboot is to be avoided anyway — the AudioVisual
+sign-in may not be recoverable):
 
 1. **A partial/broken earlier Python install is registered** (for
-   example, from an interrupted setup). Remedy: reboot, then
-   Settings → Apps → Installed apps → uninstall any **Python 3.12**
-   and **Python Launcher** entries, then re-run setup. The setup
-   script also tries this automatically (uninstall + `--force`
-   retry) before giving up.
-2. **A pending reboot / pending Windows install.** Reboot the laptop
-   and re-run setup before trying anything else.
+   example, from an interrupted setup). This is the usual cause and
+   it is fixable live: re-running `setup_windows.ps1` automatically
+   winget-uninstalls the remnants and retries with `--force`. By
+   hand, the same thing is:
+   `winget uninstall --id Python.Python.3.12 --exact` then re-run
+   setup. Also check for a **hung installer** holding the lock:
+   Task Manager → end any stuck `msiexec.exe` / Python installer
+   process left over from the failed run.
+2. **Bypass the MSI installer entirely:** install **Python 3.12 from
+   the Microsoft Store app** instead. It installs with completely
+   different technology (no Windows Installer, so no 1603), and the
+   setup script detects it — it verifies `python --version` actually
+   runs, which the empty Store *stub* cannot do.
+3. **A pending reboot / pending Windows install** can also cause it,
+   but treat this as a last resort on a machine whose sign-in may
+   not be recoverable — try 1 and 2 first.
 3. Something deeper — the real reason is in the Python installer's
    own log: open `%TEMP%` (Win+R, type `%TEMP%`), find the newest
    `Python 3.12.x (64-bit)_*.log`, and look at the last error lines

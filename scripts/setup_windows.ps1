@@ -24,8 +24,10 @@
   was not found; run without arguments to install from the Microsoft
   Store". An early version of this script treated that stub as a real
   Python, skipped the install, and then failed creating the venv.
-  Get-RealPython below ignores anything under WindowsApps and verifies
-  candidates by actually running --version.
+  Get-RealPython below verifies every candidate by actually running
+  --version: the stub cannot print a version, while a REAL Python
+  (python.org, winget, or the Microsoft Store app - which uses the
+  same WindowsApps alias) can.
 #>
 [CmdletBinding()]
 param(
@@ -86,16 +88,18 @@ function Get-RealPython {
         }
     }
 
-    # 2. Anything on PATH that is not a Store stub.
+    # 2. Anything on PATH. Entries under WindowsApps are USUALLY the
+    # Store stub, but the same alias also serves a REAL Python if the
+    # Microsoft Store Python app is installed - so don't blocklist the
+    # path; the --version verification below separates them (the stub
+    # cannot print a version).
     foreach ($Cmd in (Get-Command "python.exe" -All -ErrorAction SilentlyContinue)) {
-        if ($Cmd.Source -notlike "*\Microsoft\WindowsApps\*") { $Candidates += $Cmd.Source }
+        $Candidates += $Cmd.Source
     }
     foreach ($Cmd in (Get-Command "py.exe" -All -ErrorAction SilentlyContinue)) {
         # The py launcher: resolve the interpreter it would run.
-        if ($Cmd.Source -notlike "*\Microsoft\WindowsApps\*") {
-            $Resolved = & $Cmd.Source "-$PythonVersion" -c "import sys; print(sys.executable)" 2>$null
-            if ($LASTEXITCODE -eq 0 -and $Resolved -and (Test-Path $Resolved)) { $Candidates += $Resolved }
-        }
+        $Resolved = & $Cmd.Source "-$PythonVersion" -c "import sys; print(sys.executable)" 2>$null
+        if ($LASTEXITCODE -eq 0 -and $Resolved -and (Test-Path $Resolved)) { $Candidates += $Resolved }
     }
 
     foreach ($Candidate in ($Candidates | Select-Object -Unique)) {
