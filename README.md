@@ -125,6 +125,12 @@ the auto-logon / SYSTEM alternatives).
 
 Remove the automation with `.\scripts\uninstall_service.ps1`.
 
+## Troubleshooting
+
+Setup or FTP problems (Microsoft Store Python stub, installer error
+1603, ffmpeg PATH, FTP check failures): see
+[`docs/TROUBLESHOOTING.md`](docs/TROUBLESHOOTING.md).
+
 ## Layout
 
 | Path | What it is |

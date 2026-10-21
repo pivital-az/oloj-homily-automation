@@ -46,14 +46,22 @@ function Refresh-Path {
                 [System.Environment]::GetEnvironmentVariable("Path", "User")
 }
 
-function Install-WingetPackage([string]$Id, [string]$DisplayName) {
+function Install-WingetPackage([string]$Id, [string]$DisplayName, [switch]$RetryAfterUninstall) {
     if (-not (Test-Command "winget")) {
         throw "winget is not available. Install 'App Installer' from the Microsoft Store, or install $DisplayName manually, then re-run."
     }
     Write-Host "Installing $DisplayName ($Id) via winget..."
     winget install --id $Id --exact --silent --accept-package-agreements --accept-source-agreements
+    if ($LASTEXITCODE -ne 0 -and $RetryAfterUninstall) {
+        # Installer exit 1603 most often means a partial/broken earlier
+        # install is registered. Remove whatever winget knows about,
+        # then retry once with --force.
+        Write-Warning "$DisplayName install failed (exit $LASTEXITCODE) - removing any partial install and retrying with --force..."
+        winget uninstall --id $Id --exact --silent 2>$null | Out-Null
+        winget install --id $Id --exact --silent --force --accept-package-agreements --accept-source-agreements
+    }
     if ($LASTEXITCODE -ne 0) {
-        throw "winget failed to install $DisplayName (exit $LASTEXITCODE)."
+        throw "winget failed to install $DisplayName (exit $LASTEXITCODE). See docs\TROUBLESHOOTING.md - for Python, a reboot plus removing leftover Python entries in Settings > Apps usually clears installer error 1603."
     }
     Refresh-Path
 }
@@ -107,7 +115,7 @@ else { Write-Host "Git: found" }
 
 $Python = Get-RealPython
 if (-not $Python) {
-    Install-WingetPackage "Python.Python.3.12" "Python 3.12"
+    Install-WingetPackage "Python.Python.3.12" "Python 3.12" -RetryAfterUninstall
     $Python = Get-RealPython
 }
 if (-not $Python) {
