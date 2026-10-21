@@ -86,10 +86,26 @@ def main() -> int:
         with FtpRecorder(settings) as recorder:
             check("FTP login", True, f"as {settings.ftp_user!r}")
             files = recorder.list_mp3s()
-            if not check("List MP3 files", bool(files),
-                         f"{len(files)} parseable recorder MP3(s)" if files
-                         else "connected, but no files matched MMDDYYYYHHMMSS_*.mp3"):
+            if not files:
+                check("List MP3 files", False,
+                      f"no files matched MMDDYYYYHHMMSS_*.mp3 in {settings.ftp_remote_dir!r}")
+                # The DN-900R stores recordings per medium (SD1/SD2/
+                # USB1) and the root is normally EMPTY - probe the
+                # usual folders before concluding anything.
+                print("       Probing the recorder's usual folders...")
+                for candidate in ("/SD1", "/SD2", "/USB1", "/"):
+                    if candidate == settings.ftp_remote_dir:
+                        continue
+                    found = recorder.list_mp3s_in(candidate)
+                    if found is None:
+                        print(f"         {candidate}: (does not exist)")
+                    else:
+                        print(f"         {candidate}: {len(found)} parseable MP3(s)")
+                        if found:
+                            print(f"\n       FIX: set FTP_REMOTE_DIR={candidate} in .env, "
+                                  "then re-run this test.")
                 return 1
+            check("List MP3 files", True, f"{len(files)} parseable recorder MP3(s)")
 
             total_mb = sum((f.size or 0) for f in files) / 1e6
             print(f"       Oldest: {files[0].name} ({files[0].start})")

@@ -44,7 +44,7 @@ class Settings:
     ftp_port: int = 21
     ftp_user: str = ""
     ftp_password: str = ""
-    ftp_remote_dir: str = "/"
+    ftp_remote_dir: str = "/SD1"
     ftp_timeout: int = 30
     recorder_filename_format: str = "%m%d%Y%H%M%S"
     chunk_minutes: int = 10
@@ -101,7 +101,7 @@ class Settings:
             ftp_port=int(g("FTP_PORT", "21")),
             ftp_user=g("FTP_USER", ""),
             ftp_password=g("FTP_PASSWORD", ""),
-            ftp_remote_dir=g("FTP_REMOTE_DIR", "/") or "/",
+            ftp_remote_dir=g("FTP_REMOTE_DIR", "/SD1") or "/SD1",
             ftp_timeout=int(g("FTP_TIMEOUT_SECONDS", "30")),
             recorder_filename_format=g("RECORDER_FILENAME_FORMAT", "%m%d%Y%H%M%S"),
             chunk_minutes=int(g("CHUNK_MINUTES", "10")),

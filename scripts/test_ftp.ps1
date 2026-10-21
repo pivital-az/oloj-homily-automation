@@ -19,6 +19,7 @@ param(
     [int]$FtpPort,
     [string]$FtpUser,
     [string]$FtpPassword,
+    [string]$RemoteDir,
     [switch]$Download
 )
 
@@ -41,6 +42,7 @@ if ($PSBoundParameters.ContainsKey("FtpHost"))     { $ArgsList += @("--host", $F
 if ($PSBoundParameters.ContainsKey("FtpPort"))     { $ArgsList += @("--port", $FtpPort) }
 if ($PSBoundParameters.ContainsKey("FtpUser"))     { $ArgsList += @("--user", $FtpUser) }
 if ($PSBoundParameters.ContainsKey("FtpPassword")) { $ArgsList += @("--password", $FtpPassword) }
+if ($PSBoundParameters.ContainsKey("RemoteDir"))   { $ArgsList += @("--remote-dir", $RemoteDir) }
 if ($Download)                                     { $ArgsList += "--download" }
 
 & $VenvPython @ArgsList
