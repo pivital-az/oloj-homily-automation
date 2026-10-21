@@ -23,6 +23,11 @@ param()
 $ErrorActionPreference = "Stop"
 $RepoRoot = Split-Path -Parent $PSScriptRoot
 Set-Location $RepoRoot
+# Pick up PATH changes from winget installs made earlier in this session
+# (new tools like ffmpeg/git are registered in the registry before they
+# appear in this window's PATH).
+$env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine") + ";" +
+            [System.Environment]::GetEnvironmentVariable("Path", "User")
 
 git pull --rebase --quiet
 if ($LASTEXITCODE -ne 0) { throw "git pull failed - resolve it by hand, then re-run." }

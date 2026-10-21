@@ -17,6 +17,15 @@
 .NOTES
   Idempotent: safe to re-run. No administrator rights are required for
   the folder/venv steps; winget may prompt for elevation per package.
+
+  MICROSOFT STORE PYTHON STUB: Windows pre-installs fake python.exe /
+  py.exe "app execution aliases" under %LOCALAPPDATA%\Microsoft\
+  WindowsApps. They are NOT Python - running one just prints "Python
+  was not found; run without arguments to install from the Microsoft
+  Store". An early version of this script treated that stub as a real
+  Python, skipped the install, and then failed creating the venv.
+  Get-RealPython below ignores anything under WindowsApps and verifies
+  candidates by actually running --version.
 #>
 [CmdletBinding()]
 param(
@@ -32,6 +41,11 @@ function Test-Command([string]$Name) {
     return [bool](Get-Command $Name -ErrorAction SilentlyContinue)
 }
 
+function Refresh-Path {
+    $env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine") + ";" +
+                [System.Environment]::GetEnvironmentVariable("Path", "User")
+}
+
 function Install-WingetPackage([string]$Id, [string]$DisplayName) {
     if (-not (Test-Command "winget")) {
         throw "winget is not available. Install 'App Installer' from the Microsoft Store, or install $DisplayName manually, then re-run."
@@ -41,9 +55,47 @@ function Install-WingetPackage([string]$Id, [string]$DisplayName) {
     if ($LASTEXITCODE -ne 0) {
         throw "winget failed to install $DisplayName (exit $LASTEXITCODE)."
     }
-    # Refresh PATH for this session so later checks can see the new tool.
-    $env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine") + ";" +
-                [System.Environment]::GetEnvironmentVariable("Path", "User")
+    Refresh-Path
+}
+
+function Get-RealPython {
+    # Returns the path of a REAL python.exe, or $null. Skips the
+    # Microsoft Store execution-alias stubs in WindowsApps and verifies
+    # every candidate by running it.
+    $Candidates = @()
+
+    # 1. Standard install locations (per-user and machine-wide).
+    $Roots = @(
+        "$env:LOCALAPPDATA\Programs\Python",
+        "$env:ProgramFiles",
+        "${env:ProgramFiles(x86)}",
+        "C:\"
+    )
+    foreach ($Root in $Roots) {
+        if ($Root -and (Test-Path $Root)) {
+            Get-ChildItem -Path $Root -Directory -Filter "Python3*" -ErrorAction SilentlyContinue |
+                ForEach-Object { $Candidates += (Join-Path $_.FullName "python.exe") }
+        }
+    }
+
+    # 2. Anything on PATH that is not a Store stub.
+    foreach ($Cmd in (Get-Command "python.exe" -All -ErrorAction SilentlyContinue)) {
+        if ($Cmd.Source -notlike "*\Microsoft\WindowsApps\*") { $Candidates += $Cmd.Source }
+    }
+    foreach ($Cmd in (Get-Command "py.exe" -All -ErrorAction SilentlyContinue)) {
+        # The py launcher: resolve the interpreter it would run.
+        if ($Cmd.Source -notlike "*\Microsoft\WindowsApps\*") {
+            $Resolved = & $Cmd.Source "-$PythonVersion" -c "import sys; print(sys.executable)" 2>$null
+            if ($LASTEXITCODE -eq 0 -and $Resolved -and (Test-Path $Resolved)) { $Candidates += $Resolved }
+        }
+    }
+
+    foreach ($Candidate in ($Candidates | Select-Object -Unique)) {
+        if (-not (Test-Path $Candidate)) { continue }
+        $Version = & $Candidate --version 2>$null
+        if ($LASTEXITCODE -eq 0 -and $Version -match "^Python 3\.") { return $Candidate }
+    }
+    return $null
 }
 
 Write-Host "== OLOJ Homily Automation - Windows setup ==" -ForegroundColor Cyan
@@ -53,21 +105,34 @@ Write-Host "Repo: $RepoRoot"
 if (-not (Test-Command "git"))    { Install-WingetPackage "Git.Git" "Git" }
 else { Write-Host "Git: found" }
 
-if (-not (Test-Command "py") -and -not (Test-Command "python")) {
+$Python = Get-RealPython
+if (-not $Python) {
     Install-WingetPackage "Python.Python.3.12" "Python 3.12"
-} else { Write-Host "Python: found" }
+    $Python = Get-RealPython
+}
+if (-not $Python) {
+    throw @"
+Real Python was not found (only the Microsoft Store stub, or nothing).
+
+Try, in order:
+  1. Close this PowerShell window, open a NEW one, and re-run this script.
+  2. If it still fails: Settings > Apps > Advanced app settings >
+     App execution aliases - turn OFF python.exe and python3.exe,
+     then install Python from https://www.python.org/downloads/
+     (tick 'Add python.exe to PATH'), and re-run this script.
+"@
+}
+Write-Host "Python: $Python ($(& $Python --version))"
 
 if (-not (Test-Command "ffmpeg")) { Install-WingetPackage "Gyan.FFmpeg" "FFmpeg" }
 else { Write-Host "FFmpeg: found" }
+Refresh-Path
+if (-not (Test-Command "ffmpeg")) {
+    Write-Warning "ffmpeg is installed but not on PATH in this window yet - it will be in any new PowerShell window and in the scheduled tasks. If you run the pipeline from THIS window, reopen it first."
+}
 
 if ($InstallOllama -and -not (Test-Command "ollama")) {
     Install-WingetPackage "Ollama.Ollama" "Ollama"
-}
-
-# Prefer the Python launcher; fall back to python.exe on PATH.
-$UsePyLauncher = Test-Command "py"
-if (-not $UsePyLauncher -and -not (Test-Command "python")) {
-    throw "Python was not found after install. Open a new PowerShell window and re-run this script."
 }
 
 # --- 2. Folders (including the models folder) ------------------------
@@ -86,14 +151,24 @@ foreach ($ModelDir in @("faster-whisper-small", "faster-whisper-medium")) {
 }
 
 # --- 3. Virtual environment + Python packages -----------------------
-$VenvPython = Join-Path $RepoRoot ".venv\Scripts\python.exe"
+$VenvDir = Join-Path $RepoRoot ".venv"
+$VenvPython = Join-Path $VenvDir "Scripts\python.exe"
 if (-not (Test-Path $VenvPython)) {
+    if (Test-Path $VenvDir) {
+        Write-Host "Removing incomplete .venv from a previous attempt..."
+        Remove-Item -Recurse -Force $VenvDir
+    }
     Write-Host "Creating virtual environment (.venv)..."
-    if ($UsePyLauncher) { & py "-$PythonVersion" -m venv (Join-Path $RepoRoot ".venv") }
-    else { & python -m venv (Join-Path $RepoRoot ".venv") }
+    & $Python -m venv $VenvDir
+    if (-not (Test-Path $VenvPython)) {
+        throw "Virtual environment creation failed - $VenvPython was not created. Re-run this script in a NEW PowerShell window; if it still fails, run '$Python -m venv .venv' by hand and note the error."
+    }
 }
+Write-Host "Virtual environment: $VenvPython ($(& $VenvPython --version))"
+
 Write-Host "Installing Python packages from requirements.txt..."
 & $VenvPython -m pip install --upgrade pip
+if ($LASTEXITCODE -ne 0) { throw "pip self-upgrade failed." }
 & $VenvPython -m pip install -r (Join-Path $RepoRoot "requirements.txt")
 if ($LASTEXITCODE -ne 0) { throw "pip install failed." }
 
@@ -109,6 +184,7 @@ if (-not (Test-Path $EnvFile)) {
 Write-Host ""
 Write-Host "Setup complete. Next steps:" -ForegroundColor Green
 Write-Host "  1. Edit .env  (FTP address/user/password, DROPBOX_HOMILY_DIR)"
-Write-Host "  2. Download the models:  .\scripts\install_models.ps1"
-Write-Host "  3. Dry run:              .\scripts\run_pipeline.ps1 -DryRun"
-Write-Host "  4. Install automation:   .\scripts\install_service.ps1"
+Write-Host "  2. Test the FTP link:    .\scripts\test_ftp.ps1 -Download"
+Write-Host "  3. Download the models:  .\scripts\install_models.ps1"
+Write-Host "  4. Dry run:              .\scripts\run_pipeline.ps1 -DryRun"
+Write-Host "  5. Install automation:   .\scripts\install_service.ps1"

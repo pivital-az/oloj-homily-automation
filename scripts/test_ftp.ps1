@@ -25,6 +25,11 @@ param(
 $ErrorActionPreference = "Stop"
 $RepoRoot = Split-Path -Parent $PSScriptRoot
 Set-Location $RepoRoot
+# Pick up PATH changes from winget installs made earlier in this session
+# (new tools like ffmpeg/git are registered in the registry before they
+# appear in this window's PATH).
+$env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine") + ";" +
+            [System.Environment]::GetEnvironmentVariable("Path", "User")
 
 $VenvPython = Join-Path $RepoRoot ".venv\Scripts\python.exe"
 if (-not (Test-Path $VenvPython)) {
