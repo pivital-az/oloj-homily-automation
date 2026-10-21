@@ -88,8 +88,16 @@ def _window_text(segments: list[dict], i: int, window: int = 3) -> str:
     """Normalized text of segments i..i+window-1 joined. Whisper cuts
     sentences wherever it likes - 'I believe in one' and 'God, the
     Father almighty...' routinely land in ADJACENT segments, so a
-    marker searched in single segments only is easy to miss."""
-    return _norm(" ".join(s["text"] for s in segments[i:i + window]))
+    marker searched in single segments only is easy to miss. The
+    window is TIME-bounded (20 s): it must never bridge a long
+    silence, or a marker after the silence would falsely match
+    against the text before it."""
+    parts = []
+    for s in segments[i:i + window]:
+        if s["start"] - segments[i]["start"] > 20.0:
+            break
+        parts.append(s["text"])
+    return _norm(" ".join(parts))
 
 
 def _find_last_marker(segments: list[dict], markers: tuple[str, ...],
@@ -156,31 +164,52 @@ def detect_homily_rules(segments: list[dict]) -> HomilySpan | None:
 
     close_idx = _find_first_marker(segments, HOMILY_CLOSE_MARKERS, start_idx)
     post_idx = _find_first_marker(segments, POST_HOMILY_MARKERS, start_idx)
+    gap_idx = _first_long_gap(segments, start_idx,
+                              float(segments[start_idx]["start"]))
 
+    # Marker-based candidate end.
+    marker_end_idx: int | None = None
+    marker_note = ""
     if post_idx is not None and (close_idx is None or post_idx < close_idx):
-        end_idx = post_idx - 1
-        notes.append(f"End set before post-homily marker at {segments[post_idx]['start']:.0f}s.")
-        confidence += 0.20
+        marker_end_idx = post_idx - 1
+        marker_note = f"End set before post-homily marker at {segments[post_idx]['start']:.0f}s."
     elif close_idx is not None:
         # Include the closing paragraph the homilist is speaking in.
-        end_idx = close_idx
-        notes.append(f"End set at homily closing transition at {segments[close_idx]['start']:.0f}s.")
-        confidence += 0.20
-    else:
-        gap_idx = _first_long_gap(segments, start_idx,
-                                  float(segments[start_idx]["start"]))
-        if gap_idx is not None:
+        marker_end_idx = close_idx
+        marker_note = f"End set at homily closing transition at {segments[close_idx]['start']:.0f}s."
+
+    if marker_end_idx is not None and gap_idx is not None:
+        # Both boundaries exist: take the EARLIER one. (Live case:
+        # homily ends, 92 s of untranscribed Creed, then intercessions
+        # match a marker - the silence is the true homily end, the
+        # marker end would glue the silent Creed onto the clip.)
+        if segments[gap_idx]["end"] <= segments[marker_end_idx]["end"]:
             end_idx = gap_idx
             notes.append(
-                f"No end marker found; end set at the first long silence "
+                f"End set at the long silence "
                 f"({segments[gap_idx + 1]['start'] - segments[gap_idx]['end']:.0f}s) "
-                f"after the homily, at {segments[gap_idx]['end']:.0f}s - inferred boundary.")
-            # Neutral: a solid Gospel-anchored start plus a structural
-            # end is publishable, but flagged in the notes.
+                f"at {segments[gap_idx]['end']:.0f}s, earlier than the "
+                f"post-homily marker at {segments[(post_idx if post_idx is not None else close_idx)]['start']:.0f}s - inferred boundary.")
         else:
-            end_idx = len(segments) - 1
-            notes.append("No end marker found; homily assumed to run to a later break - review advised.")
-            confidence -= 0.10
+            end_idx = marker_end_idx
+            notes.append(marker_note)
+            confidence += 0.20
+    elif marker_end_idx is not None:
+        end_idx = marker_end_idx
+        notes.append(marker_note)
+        confidence += 0.20
+    elif gap_idx is not None:
+        end_idx = gap_idx
+        notes.append(
+            f"No end marker found; end set at the first long silence "
+            f"({segments[gap_idx + 1]['start'] - segments[gap_idx]['end']:.0f}s) "
+            f"after the homily, at {segments[gap_idx]['end']:.0f}s - inferred boundary.")
+        # Neutral: a solid Gospel-anchored start plus a structural
+        # end is publishable, but flagged in the notes.
+    else:
+        end_idx = len(segments) - 1
+        notes.append("No end marker found; homily assumed to run to a later break - review advised.")
+        confidence -= 0.10
 
     if end_idx < start_idx:
         return None

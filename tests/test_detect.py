@@ -59,6 +59,30 @@ class TestEndMarkers(unittest.TestCase):
         self.assertTrue(any("inferred boundary" in n for n in span.notes))
         self.assertGreaterEqual(span.confidence, 0.6)
 
+    def test_gap_earlier_than_marker_wins(self):
+        # The live shape: homily, long silence (untranscribed Creed),
+        # then intercessions carrying a marker phrase. The silence is
+        # the true end - the marker end would include the Creed.
+        segments = base_through_gospel() + speech(930, 1500)
+        segments += [seg(1592, 1630, "For the Church, we pray to the Lord. Lord, hear our prayer.")]
+        segments += speech(1630, 2400, "More intercessions and liturgy.")
+        span = detect_homily_rules(segments)
+        self.assertIsNotNone(span)
+        self.assertLessEqual(span.end_s, 1500)
+        self.assertTrue(any("earlier than the post-homily marker" in n for n in span.notes))
+
+    def test_marker_earlier_than_gap_wins(self):
+        # Normal shape: homily, short pause, Creed (marker), then a
+        # long musical stretch much later. The marker end must win.
+        segments = base_through_gospel() + speech(930, 1500) + [
+            seg(1505, 1516, "I believe in one God, the Father almighty,"),
+        ] + speech(1516, 1900, "The Creed continues.")
+        segments += speech(1990, 2600, "Offertory and Eucharistic prayer.")
+        span = detect_homily_rules(segments)
+        self.assertIsNotNone(span)
+        self.assertLessEqual(span.end_s, 1505)
+        self.assertTrue(any("post-homily marker" in n for n in span.notes))
+
     def test_no_marker_no_gap_stays_low_confidence(self):
         # The live 2026-09-13 07:00 failure shape: solid start, then
         # unbroken segments to the end of the recording.
