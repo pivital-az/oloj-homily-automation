@@ -78,6 +78,7 @@ to fix:
 
 | Failing check | Likely cause |
 | --- | --- |
+| TCP connect (timeout) | **Recorder is in standby** — the DN-900R stops answering the network entirely when idle-asleep. Wake it with the front-panel On/Standby button. For unattended scheduled runs, check the unit's presets for an auto-standby / power-save option and disable it (or enable network-in-standby) if present. The client retries 3 times over ~2 minutes, but nothing on the laptop can wake a unit whose network is off. |
 | TCP connect | Laptop not on the recorder's network (check Wi-Fi/Ethernet), recorder off, wrong `FTP_HOST` |
 | FTP login | Wrong `FTP_USER`/`FTP_PASSWORD` in `.env` (this recorder: user `Admin`, empty password) |
 | List MP3 files | Wrong `FTP_REMOTE_DIR`, or the recorder's card has no recordings yet |
