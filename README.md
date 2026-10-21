@@ -52,12 +52,38 @@ Typical end-to-end time on the target laptop: ~25–40 minutes for a
 
 ## Quick start (Windows, PowerShell)
 
+> **Start here — before any `git` command.** A fresh laptop does not
+> have git yet, so it cannot `git clone` this repo to get the setup
+> script that installs git. Break the circle with winget, which ships
+> with Windows 10/11:
+
+```powershell
+# 0. Install Git FIRST (PowerShell, no git required for this step)
+winget install --id Git.Git --exact --accept-package-agreements --accept-source-agreements
+
+#    Then CLOSE PowerShell and open a NEW one, so git is on PATH. Verify:
+git --version
+```
+
+No winget? Two other git-free ways in: on the GitHub repo page use
+**Code → Download ZIP** and extract it (skip the clone below, `cd` into
+the extracted folder instead) — or fetch the one-file bootstrap, which
+does the winget install, the clone, and the setup in order:
+
+```powershell
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/pivital-az/oloj-homily-automation/main/scripts/bootstrap_windows.ps1" -OutFile "$HOME\bootstrap_windows.ps1"
+powershell -ExecutionPolicy Bypass -File "$HOME\bootstrap_windows.ps1"
+```
+
+Then, with git installed:
+
 ```powershell
 git clone https://github.com/pivital-az/oloj-homily-automation.git
 cd oloj-homily-automation
 
-# 1. Install Python / Git / FFmpeg (if missing), create folders
-#    (including .\models), create .venv, install packages, seed .env
+# 1. Install Python / FFmpeg (if missing; also Git, harmless if already
+#    there), create folders (including .\models), create .venv,
+#    install packages, seed .env
 powershell -ExecutionPolicy Bypass -File .\scripts\setup_windows.ps1
 
 # 2. Fill in .env  (FTP address + credentials, DROPBOX_HOMILY_DIR, ...)
@@ -66,13 +92,21 @@ notepad .env
 # 3. Download the models into .\models  (small + medium, ~2 GB total)
 .\scripts\install_models.ps1                # add -IncludeOllamaModel if using Ollama
 
-# 4. See what would be processed for the latest Sunday (no downloads)
+# 4. Test the FTP connection to the recorder (uses the .env values).
+#    PASS/FAIL per check: reachable -> login -> list -> parsed chunks
+#    -> latest-Sunday grouping.  Add -Download to also pull the newest
+#    file into work\ftp_test and verify its size.  Any value can be
+#    overridden, e.g. first run before .env is filled in:
+.\scripts\test_ftp.ps1 -Download
+# .\scripts\test_ftp.ps1 -FtpHost <recorder-ip> -FtpUser <user> -FtpPassword "" -Download
+
+# 5. See what would be processed for the latest Sunday (no downloads)
 .\scripts\run_pipeline.ps1 -DryRun
 
-# 5. One real run
+# 6. One real run
 .\scripts\run_pipeline.ps1
 
-# 6. Background automation (Task Scheduler - Windows' cron):
+# 7. Background automation (Task Scheduler - Windows' cron):
 #    Sundays 19:00 + Mondays 07:00 catch-up + a run 5 min after logon
 .\scripts\install_service.ps1
 ```
@@ -98,6 +132,8 @@ Remove the automation with `.\scripts\uninstall_service.ps1`.
 | `scripts\setup_windows.ps1` | One-time install of tools, folders, venv, `.env` |
 | `scripts\install_models.ps1` / `.py` | Download Whisper models into `.\models` |
 | `scripts\run_pipeline.ps1` | Run one pass (what the scheduled tasks call) |
+| `scripts\bootstrap_windows.ps1` | Cold start on a laptop with no git: installs Git via winget, clones, runs setup |
+| `scripts\test_ftp.ps1` + `src\test_ftp.py` | FTP connection test: reachability, login, listing, grouping, optional 1-file pull |
 | `scripts\install_service.ps1` | Register the Sunday/Monday/logon scheduled tasks (restart-proof) |
 | `scripts\publish_pages.ps1` | Commit + push new episodes to GitHub Pages |
 | `.env.example` | Every setting, documented. Copy to `.env` |
