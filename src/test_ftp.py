@@ -32,7 +32,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from config import Settings
 from ftp_client import FtpRecorder
-from sunday import files_for_date, group_into_services, latest_sunday
+from sunday import files_for_date, group_into_services, latest_sunday, load_tz
 
 
 def check(label: str, ok: bool, detail: str = "") -> bool:
@@ -97,8 +97,7 @@ def main() -> int:
             print(f"       Total:  {total_mb:.1f} MB across {len(files)} file(s)")
 
             from datetime import datetime
-            from zoneinfo import ZoneInfo
-            target = latest_sunday(datetime.now(ZoneInfo(settings.timezone)).date())
+            target = latest_sunday(datetime.now(load_tz(settings.timezone)).date())
             sunday_files = files_for_date(files, target)
             services = group_into_services(sunday_files, settings.service_gap_minutes)
             print(f"       Latest Sunday {target}: {len(sunday_files)} file(s) "

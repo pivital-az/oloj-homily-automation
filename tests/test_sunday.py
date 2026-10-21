@@ -10,7 +10,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
 
-from sunday import (RemoteFile, files_for_date, group_into_services,
+from sunday import (RemoteFile, files_for_date, group_into_services, load_tz,
                     latest_sunday, parse_recorder_filename)
 
 
@@ -68,3 +68,13 @@ class TestGrouping(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestLoadTz(unittest.TestCase):
+    def test_real_zone(self):
+        self.assertEqual(str(load_tz("America/Phoenix")), "America/Phoenix")
+
+    def test_bad_zone_gives_actionable_error(self):
+        with self.assertRaises(RuntimeError) as ctx:
+            load_tz("Not/AZone")
+        self.assertIn("tzdata", str(ctx.exception))

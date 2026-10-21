@@ -28,10 +28,10 @@ from datetime import datetime
 from email.utils import format_datetime
 from pathlib import Path
 from xml.etree import ElementTree as ET
-from zoneinfo import ZoneInfo
 
 from config import Settings
 from publish import atomic_copy
+from sunday import load_tz
 
 ITUNES = "http://www.itunes.com/dtds/podcast-1.0.dtd"
 ET.register_namespace("itunes", ITUNES)
@@ -91,7 +91,7 @@ def add_episode(settings: Settings, homily_mp3: Path, title: str,
     item = ET.Element("item")
     ET.SubElement(item, "title").text = title
     ET.SubElement(item, "description").text = description
-    tz = ZoneInfo(settings.timezone)
+    tz = load_tz(settings.timezone)
     pub_dt = service_dt.replace(tzinfo=tz)
     ET.SubElement(item, "pubDate").text = format_datetime(pub_dt)
     ET.SubElement(item, "guid", {"isPermaLink": "false"}).text = guid_key

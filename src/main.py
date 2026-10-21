@@ -29,7 +29,6 @@ import logging
 import sys
 from datetime import date, datetime
 from pathlib import Path
-from zoneinfo import ZoneInfo
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
@@ -41,7 +40,7 @@ from homily_detect import detect_homily
 from publish import publish_to_dropbox, save_to_review
 from spotify_rss import add_episode as spotify_add_episode
 from state import State
-from sunday import Service, files_for_date, group_into_services, latest_sunday
+from sunday import Service, files_for_date, group_into_services, latest_sunday, load_tz
 from transcribe import segments_to_text, transcribe_file
 
 
@@ -160,7 +159,7 @@ def main() -> int:
     log = setup_logging(settings)
     state = State(settings.state_file)
 
-    tz = ZoneInfo(settings.timezone)
+    tz = load_tz(settings.timezone)
     today_local = datetime.now(tz).date()
     target = date.fromisoformat(args.date) if args.date else latest_sunday(today_local)
     if target.weekday() != 6:

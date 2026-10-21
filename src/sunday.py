@@ -16,6 +16,25 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass, field
 from datetime import date, datetime, time, timedelta
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
+
+
+def load_tz(name: str) -> ZoneInfo:
+    """ZoneInfo with a human-actionable error.
+
+    Windows ships no IANA timezone database, so on Windows zoneinfo
+    only works with the 'tzdata' pip package installed (it is in
+    requirements.txt). Turn that confusing traceback into one line.
+    """
+    try:
+        return ZoneInfo(name)
+    except ZoneInfoNotFoundError as exc:
+        raise RuntimeError(
+            f"Timezone '{name}' is not available on this machine. On "
+            "Windows this needs the 'tzdata' package: run "
+            r"'.venv\Scripts\python.exe -m pip install tzdata' "
+            "(or git pull + re-run scripts\\setup_windows.ps1)."
+        ) from exc
 
 # 14 digits (timestamp) followed by _<anything>.mp3
 FILENAME_RE = re.compile(r"^(?P<stamp>\d{14})_.+\.mp3$", re.IGNORECASE)
