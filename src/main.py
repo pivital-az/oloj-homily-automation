@@ -55,6 +55,22 @@ def setup_logging(settings: Settings) -> logging.Logger:
     return logging.getLogger("homily")
 
 
+def dated_audio_name(service: Service, title: str) -> str:
+    """Published MP3 filename: date + SERVICE START TIME + title slug.
+
+    The start time is load-bearing: same Sunday, same readings, often
+    the same homilist - two services can earn the SAME title, and a
+    date+title name would make the later homily overwrite the earlier
+    one in the podcast folder (and in Dropbox via the folder below)."""
+    return (f"{service.service_date.isoformat()}_"
+            f"{service.start.strftime('%H%M')}_{slugify(title)}.mp3")
+
+
+def publish_folder_name(service: Service, title: str) -> str:
+    return (f"{service.service_date.isoformat()}_"
+            f"{service.start.strftime('%H%M')}_{slugify(title)}")
+
+
 def process_service(settings: Settings, log: logging.Logger, state: State,
                     service: Service, local_chunks: list[Path]) -> str:
     sid = service.service_id
@@ -111,7 +127,7 @@ def process_service(settings: Settings, log: logging.Logger, state: State,
 
     service_dt = datetime.combine(service.service_date, service.start.time())
     blog_md, meta = build_blog_post(settings, homily_segments, service.service_date, homily_mp3.name)
-    dated_mp3 = work / f"{service.service_date.isoformat()}_{slugify(meta['title'])}.mp3"
+    dated_mp3 = work / dated_audio_name(service, meta["title"])
     homily_mp3.replace(dated_mp3)
     homily_mp3 = dated_mp3
     # The blog post references the audio filename - keep them in sync.
@@ -123,7 +139,7 @@ def process_service(settings: Settings, log: logging.Logger, state: State,
     blog_md = blog_md.replace(f"*Listen to this homily: {old_name}*",
                               f"*Listen to this homily: {homily_mp3.name}*")
 
-    publish_folder = f"{service.service_date.isoformat()}_{slugify(meta['title'])}"
+    publish_folder = publish_folder_name(service, meta["title"])
     published_dir = publish_to_dropbox(
         settings, publish_folder, blog_md, f"{slugify(meta['title'])}.md",
         homily_mp3, transcript_text,
