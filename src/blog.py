@@ -36,25 +36,64 @@ def slugify(text: str) -> str:
     return slug or "homily"
 
 
+_SENTENCE_SPLIT = re.compile(r"(?<=[.!?…])\s+")
+
+
+def _sentences_with_gaps(segments: list[dict]) -> list[tuple[str, float]]:
+    """Flatten segments into (sentence, gap_before_it) pairs.
+
+    Whisper packs several sentences into one segment and just as often
+    ends a segment mid-sentence, so sentence boundaries must be found
+    in the text itself, not at segment edges. A segment's pause gap is
+    attached to its first sentence; later sentences inherit 0."""
+    out: list[tuple[str, float]] = []
+    prev_end: float | None = None
+    for seg in segments:
+        text = seg["text"].strip()
+        if not text:
+            continue
+        gap = (seg["start"] - prev_end) if prev_end is not None else 0.0
+        prev_end = seg["end"]
+        for i, sentence in enumerate(_SENTENCE_SPLIT.split(text)):
+            sentence = sentence.strip()
+            if sentence:
+                out.append((sentence, gap if i == 0 else 0.0))
+    return out
+
+
 def paragraphs_from_segments(segments: list[dict],
-                             pause_s: float = 1.4, max_words: int = 90) -> list[str]:
-    """Group transcript segments into readable paragraphs: break on a
-    real pause in speech, or when a paragraph gets long for the web."""
+                             soft_pause_s: float = 1.2,
+                             min_words: int = 55,
+                             hard_max_words: int = 110) -> list[str]:
+    """Group a homily transcript into readable paragraphs.
+
+    The original rule broke at segment starts on any pause >= 1.4s or
+    at 90 words - it cut sentences in half and stranded fragments
+    ("It is their nature." as its own paragraph), because a preacher's
+    dramatic pauses are not paragraph breaks (real homily: 21 gaps
+    >= 1.4s, median gap 0.46s, and segments end mid-sentence anyway).
+
+    New rule: split into sentences first, then break ONLY between
+    sentences - once the paragraph holds >= min_words, at a real pause
+    once it holds >= 25 words, and always by hard_max_words."""
     paragraphs: list[str] = []
     current: list[str] = []
-    prev_end: float | None = None
     words = 0
-    for seg in segments:
-        gap = (seg["start"] - prev_end) if prev_end is not None else 0.0
-        if current and (gap >= pause_s or words >= max_words):
+    for sentence, gap in _sentences_with_gaps(segments):
+        if current and (
+            words >= hard_max_words
+            or words >= min_words
+            or (gap >= soft_pause_s and words >= 25)
+        ):
             paragraphs.append(" ".join(current).strip())
             current, words = [], 0
-        current.append(seg["text"])
-        words += len(seg["text"].split())
-        prev_end = seg["end"]
+        current.append(sentence)
+        words += len(sentence.split())
     if current:
         paragraphs.append(" ".join(current).strip())
-    return [p for p in paragraphs if p]
+    # Capitalize each paragraph's first letter: Whisper often resumes
+    # mid-flow in lowercase, which looks like a typo in print.
+    return [p[:1].upper() + p[1:] for p in paragraphs if p]
 
 
 def detect_scripture_refs(text: str) -> list[str]:
