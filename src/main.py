@@ -126,7 +126,8 @@ def process_service(settings: Settings, log: logging.Logger, state: State,
     (work / "homily_segments.json").write_text(json.dumps(homily_segments, indent=2), encoding="utf-8")
 
     service_dt = datetime.combine(service.service_date, service.start.time())
-    blog_md, meta = build_blog_post(settings, homily_segments, service.service_date, homily_mp3.name)
+    blog_md, meta = build_blog_post(settings, homily_segments, service.service_date,
+                                    homily_mp3.name, service_start=service.start)
     dated_mp3 = work / dated_audio_name(service, meta["title"])
     homily_mp3.replace(dated_mp3)
     homily_mp3 = dated_mp3

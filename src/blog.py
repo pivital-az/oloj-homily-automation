@@ -3,14 +3,14 @@
 Light formatting only: the homilist's words are not rewritten. The
 formatting adds a title, metadata, short web paragraphs, a pull quote
 and (optionally, via the local LLM) subheadings. If no LLM title is
-available, the title falls back to "Homily for <date>" - accurate and
-professional, never invented theology.
+available, the title falls back to "Homily for <date> — <Mass time>" -
+accurate and professional, never invented theology.
 """
 from __future__ import annotations
 
 import json
 import re
-from datetime import date
+from datetime import date, datetime
 
 from config import Settings
 
@@ -105,8 +105,22 @@ def _llm_title_and_headings(settings: Settings, paragraphs: list[str]) -> tuple[
         return None, [""] * len(paragraphs)
 
 
+def fallback_title(service_date: date, service_start: datetime | None = None) -> str:
+    """Title used when no LLM title is available.
+
+    Includes the Mass time when known: with the LLM off, EVERY homily
+    used to fall back to the identical "Homily for <date>", so all of a
+    Sunday's services shared one title (and one slug). The time keeps
+    same-day titles distinct and tells parishioners which Mass it was."""
+    base = f"Homily for {service_date.strftime('%B %d, %Y')}"
+    if service_start is None:
+        return base
+    return f"{base} — {service_start.strftime('%I:%M %p').lstrip('0')}"
+
+
 def build_blog_post(settings: Settings, segments: list[dict],
-                    service_date: date, audio_filename: str) -> tuple[str, dict]:
+                    service_date: date, audio_filename: str,
+                    service_start: datetime | None = None) -> tuple[str, dict]:
     """Return (markdown_text, meta) for one homily."""
     paragraphs = paragraphs_from_segments(segments)
     full_text = " ".join(paragraphs)
@@ -117,7 +131,7 @@ def build_blog_post(settings: Settings, segments: list[dict],
     if settings.enable_ollama:
         title, headings = _llm_title_and_headings(settings, paragraphs)
     if not title:
-        title = f"Homily for {service_date.strftime('%B %d, %Y')}"
+        title = fallback_title(service_date, service_start)
 
     slug = slugify(title)
     excerpt = ""
