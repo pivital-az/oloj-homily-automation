@@ -2,6 +2,8 @@
 .SYNOPSIS
   Run one pipeline pass (latest Sunday) using the repo virtualenv.
   This is what the scheduled tasks call; it is also safe to run by hand.
+  Before running it pulls the latest code from GitHub (best effort: a
+  failed pull warns and the run continues with the code on disk).
 
 .EXAMPLE
   .\scripts\run_pipeline.ps1
@@ -23,6 +25,24 @@ Set-Location $RepoRoot
 # appear in this window's PATH).
 $env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine") + ";" +
             [System.Environment]::GetEnvironmentVariable("Path", "User")
+
+# Self-update: pull the latest code before running, so fixes pushed to
+# GitHub reach this laptop without anyone remembering a manual pull
+# (Stone asked for this 2026-10-23). Best effort only: ANY failure -
+# no network, a conflict, git missing - logs a warning and the run
+# continues with the code already on disk; a failed update must never
+# cost a Sunday its homilies. --autostash sets aside uncommitted local
+# changes (e.g. episodes not yet published) and restores them after
+# the pull. .env, .models, work\ and state are untracked/gitignored
+# and are never touched by a pull. If the pull updates this script
+# itself, the current run keeps the already-loaded copy and the new
+# one applies from the next run; src\*.py updates apply immediately.
+try {
+    git pull --rebase --autostash --quiet 2>$null
+    if ($LASTEXITCODE -ne 0) { throw "git pull exited $LASTEXITCODE" }
+} catch {
+    Write-Warning "Self-update skipped ($_) - running with the code already on this laptop."
+}
 
 $VenvPython = Join-Path $RepoRoot ".venv\Scripts\python.exe"
 if (-not (Test-Path $VenvPython)) {
