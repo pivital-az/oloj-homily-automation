@@ -18,6 +18,8 @@ Default behaviour (what the scheduled task runs):
 Usage:
   python src/main.py                     # latest Sunday
   python src/main.py --date 2026-10-18   # a specific Sunday
+  python src/main.py --start 2026-09-01 --end 2026-09-30
+                                         # every Sunday in the range
   python src/main.py --dry-run           # list + group only, no downloads
   python src/main.py --force             # reprocess even if completed
 """
@@ -40,7 +42,7 @@ from homily_detect import detect_homily
 from publish import publish_to_dropbox, save_to_review
 from spotify_rss import add_episode as spotify_add_episode
 from state import State
-from sunday import Service, files_for_date, group_into_services, latest_sunday, load_tz
+from sunday import Service, files_for_date, group_into_services, latest_sunday, load_tz, sundays_between
 from transcribe import segments_to_text, transcribe_file
 
 
@@ -169,8 +171,10 @@ def process_service(settings: Settings, log: logging.Logger, state: State,
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--date", help="Sunday to process, YYYY-MM-DD (default: latest Sunday)")
+    parser.add_argument("--start", help="First date of a range to process, YYYY-MM-DD (needs --end)")
+    parser.add_argument("--end", help="Last date of a range to process, YYYY-MM-DD (needs --start)")
     parser.add_argument("--dry-run", action="store_true",
-                        help="List FTP files for the target Sunday and show service grouping only")
+                        help="List FTP files for the target Sunday(s) and show service grouping only")
     parser.add_argument("--force", action="store_true",
                         help="Reprocess services already marked completed")
     args = parser.parse_args()
@@ -181,11 +185,29 @@ def main() -> int:
 
     tz = load_tz(settings.timezone)
     today_local = datetime.now(tz).date()
-    target = date.fromisoformat(args.date) if args.date else latest_sunday(today_local)
-    if target.weekday() != 6:
-        log.warning("Target date %s is a %s, not a Sunday - continuing because it was requested explicitly.",
-                    target, target.strftime("%A"))
-    log.info("Target Sunday: %s (today local: %s)", target, today_local)
+    if args.date and (args.start or args.end):
+        parser.error("--date cannot be combined with --start/--end.")
+    if bool(args.start) != bool(args.end):
+        parser.error("--start and --end must be given together.")
+    if args.start:
+        start = date.fromisoformat(args.start)
+        end = date.fromisoformat(args.end)
+        if end < start:
+            parser.error(f"--end {end} is before --start {start}.")
+        targets = sundays_between(start, end)
+        if not targets:
+            log.error("No Sunday in %s..%s - nothing to process. "
+                      "Use --date for a single non-Sunday date.", start, end)
+            return 2
+    elif args.date:
+        targets = [date.fromisoformat(args.date)]
+        if targets[0].weekday() != 6:
+            log.warning("Target date %s is a %s, not a Sunday - continuing because it was requested explicitly.",
+                        targets[0], targets[0].strftime("%A"))
+    else:
+        targets = [latest_sunday(today_local)]
+    log.info("Target Sunday(s): %s (today local: %s)",
+             ", ".join(str(t) for t in targets), today_local)
 
     problems = settings.validate_for_run()
     if problems and not args.dry_run:
@@ -201,29 +223,37 @@ def main() -> int:
     with FtpRecorder(settings) as recorder:
         all_files = recorder.list_mp3s()
     log.info("Recorder holds %d parseable MP3 chunk(s).", len(all_files))
-    sunday_files = files_for_date(all_files, target)
-    services = group_into_services(sunday_files, settings.service_gap_minutes)
-    log.info("%d chunk(s) match %s -> %d service(s).", len(sunday_files), target, len(services))
-    for service in services:
-        log.info("  %s", service.label)
+    # One FTP listing serves every target Sunday in a range; each
+    # Sunday is grouped and processed in turn, exactly as a single
+    # --date run would have done it.
+    services_by_target: list[tuple[date, list[Service]]] = []
+    for target in targets:
+        sunday_files = files_for_date(all_files, target)
+        services = group_into_services(sunday_files, settings.service_gap_minutes)
+        log.info("%d chunk(s) match %s -> %d service(s).", len(sunday_files), target, len(services))
+        for service in services:
+            log.info("  %s", service.label)
+        services_by_target.append((target, services))
 
     if args.dry_run:
         log.info("Dry run - nothing downloaded or processed.")
         return 0
 
-    for service in services:
-        if state.service_done(service.service_id) and not args.force:
-            log.info("Skipping %s - already completed (use --force to redo).", service.service_id)
-            continue
-        try:
-            chunk_dir = settings.work_dir / "downloads" / service.service_id
-            with FtpRecorder(settings) as recorder:
-                local_chunks = [recorder.download(f, chunk_dir) for f in service.files]
-            outcome = process_service(settings, log, state, service, local_chunks)
-            log.info("Service %s: %s", service.service_id, outcome)
-        except Exception as exc:
-            log.exception("Service %s FAILED: %s", service.service_id, exc)
-            state.mark_service(service.service_id, "failed", {"error": str(exc)})
+    for target, services in services_by_target:
+        log.info("Processing Sunday %s (%d service(s)).", target, len(services))
+        for service in services:
+            if state.service_done(service.service_id) and not args.force:
+                log.info("Skipping %s - already completed (use --force to redo).", service.service_id)
+                continue
+            try:
+                chunk_dir = settings.work_dir / "downloads" / service.service_id
+                with FtpRecorder(settings) as recorder:
+                    local_chunks = [recorder.download(f, chunk_dir) for f in service.files]
+                outcome = process_service(settings, log, state, service, local_chunks)
+                log.info("Service %s: %s", service.service_id, outcome)
+            except Exception as exc:
+                log.exception("Service %s FAILED: %s", service.service_id, exc)
+                state.mark_service(service.service_id, "failed", {"error": str(exc)})
     return 0
 
 

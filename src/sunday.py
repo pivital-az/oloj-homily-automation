@@ -82,6 +82,24 @@ def latest_sunday(today: date) -> date:
     return today - timedelta(days=days_since_sunday)
 
 
+def sundays_between(start: date, end: date) -> list[date]:
+    """Every Sunday in [start, end], in order. Empty if the range
+    contains no Sunday (the caller should say so plainly, not
+    silently process nothing). A range is how a missed Sunday - or
+    a backfill like Sept 13 after a gap - is reprocessed: one
+    invocation, one FTP listing, every Sunday in the range."""
+    if end < start:
+        return []
+    out: list[date] = []
+    current = start
+    # Advance to the first Sunday on or after start.
+    current += timedelta(days=(6 - current.weekday()) % 7)
+    while current <= end:
+        out.append(current)
+        current += timedelta(days=7)
+    return out
+
+
 def files_for_date(files: list[RemoteFile], target: date) -> list[RemoteFile]:
     return sorted([f for f in files if f.start.date() == target], key=lambda f: f.start)
 

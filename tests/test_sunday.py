@@ -11,7 +11,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
 
 from sunday import (RemoteFile, files_for_date, group_into_services, load_tz,
-                    latest_sunday, parse_recorder_filename)
+                    latest_sunday, parse_recorder_filename, sundays_between)
 
 
 def rf(name: str, start: datetime, size: int = 9_600_000) -> RemoteFile:
@@ -31,6 +31,20 @@ class TestLatestSunday(unittest.TestCase):
 
     def test_saturday_goes_back_six_days(self):
         self.assertEqual(latest_sunday(date(2026, 10, 24)), date(2026, 10, 18))
+
+
+class TestSundaysBetween(unittest.TestCase):
+    def test_september_2026_sundays(self):
+        self.assertEqual(
+            sundays_between(date(2026, 9, 1), date(2026, 9, 30)),
+            [date(2026, 9, 6), date(2026, 9, 13), date(2026, 9, 20), date(2026, 9, 27)])
+
+    def test_range_with_no_sunday_is_empty(self):
+        self.assertEqual(sundays_between(date(2026, 9, 7), date(2026, 9, 11)), [])
+
+    def test_single_sunday_range(self):
+        self.assertEqual(sundays_between(date(2026, 9, 13), date(2026, 9, 13)),
+                         [date(2026, 9, 13)])
 
 
 class TestFilenameParsing(unittest.TestCase):

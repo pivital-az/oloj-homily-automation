@@ -66,7 +66,13 @@ def _load_feed(settings: Settings) -> ET.ElementTree:
 
 def add_episode(settings: Settings, homily_mp3: Path, title: str,
                 description: str, service_dt: datetime, guid_key: str) -> str | None:
-    """Add (or replace) one episode in the feed. Returns the episode URL."""
+    """Add (or replace) one episode in the feed. Returns the episode URL.
+
+    Replacement is by service (date + start time), not by GUID alone:
+    a legacy episode for the same service, published under a
+    different title slug/MP3 name, is removed and its orphaned MP3
+    deleted instead of leaving a duplicate in the feed.
+    """
     if not settings.podcast_audio_base_url:
         print("[spotify] SKIPPED: PODCAST_AUDIO_BASE_URL is not set. "
               "An RSS enclosure needs a public HTTPS URL for the MP3 - "
@@ -82,11 +88,39 @@ def add_episode(settings: Settings, homily_mp3: Path, title: str,
     channel = tree.getroot().find("channel")
     assert channel is not None
 
-    # Idempotent: drop any existing item with the same GUID first.
+    # Idempotent: drop any existing item for this same service first.
+    # Matching by GUID alone is not enough. A pre-fix episode (e.g.
+    # Sept 13 11:00, published before service start times were added
+    # to titles) carries a DIFFERENT GUID and a different MP3 name
+    # than the reprocessed episode for the same service, so a plain
+    # GUID match would leave both in the feed - the duplicate the
+    # Sept 13 11:00 gap exposed. The service id is stable across
+    # reprocessing (date + start time), so any item whose GUID starts
+    # with "oloj-<service_id>-" is the same service, whatever its
+    # title slug was when it was published.
+    service_id = service_dt.strftime("%Y-%m-%d_%H%M")
+    service_prefix = f"oloj-{service_id}-"
+    removed_audio_names: list[str] = []
     for item in channel.findall("item"):
         guid_el = item.find("guid")
-        if guid_el is not None and guid_el.text == guid_key:
+        guid_text = guid_el.text if guid_el is not None else ""
+        if guid_text == guid_key or (guid_text and guid_text.startswith(service_prefix)):
+            enclosure_el = item.find("enclosure")
+            if enclosure_el is not None and enclosure_el.get("url"):
+                removed_audio_names.append(Path(enclosure_el.get("url")).name)
             channel.remove(item)
+    # Drop the orphaned audio of any replaced legacy item (same
+    # service, old MP3 name) so docs/audio does not keep serving a
+    # file the feed no longer references. The new MP3 is never
+    # deleted: its name is excluded by the check below (and if a
+    # replaced item already used the new name, atomic_copy above
+    # has already overwritten it with the new content).
+    for old_name in removed_audio_names:
+        if old_name and old_name != dest_audio.name:
+            old_path = settings.podcast_audio_dir / old_name
+            if old_path.is_file():
+                old_path.unlink()
+                print(f"[spotify] Removed orphaned audio for replaced episode: {old_name}")
 
     item = ET.Element("item")
     ET.SubElement(item, "title").text = title

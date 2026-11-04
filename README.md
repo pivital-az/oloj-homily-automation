@@ -44,8 +44,11 @@ two publishing steps: Dropbox (parish site) and the podcast feed.
    The free hosting option is this repo's own GitHub Pages site
    (`docs/` folder) — see `docs/GITHUB_PAGES.md` for setup and the
    ~1 GB / ~65–100 episode capacity limit.
-10. **State** — `data\state.json` marks the service completed, so
-    scheduled re-runs skip it. Failures are logged to `logs\`.
+10. **State + logs** — `data\state.json` marks the service completed,
+    so scheduled re-runs skip it (unless `--force`). Every real run's
+    log in `logs\` is sanitized and published to the Pages site's
+    `logs/` page, success or failure, so a failed run can be
+    diagnosed offsite.
 
 Typical end-to-end time on the target laptop: ~25–40 minutes for a
 70-minute service, unattended.
@@ -141,7 +144,11 @@ Setup or FTP problems (Microsoft Store Python stub, installer error
 | `scripts\bootstrap_windows.ps1` | Cold start on a laptop with no git: installs Git via winget, clones, runs setup |
 | `scripts\test_ftp.ps1` + `src\test_ftp.py` | FTP connection test: reachability, login, listing, grouping, optional 1-file pull |
 | `scripts\install_service.ps1` | Register the Sunday/Monday/logon scheduled tasks (restart-proof) |
-| `scripts\publish_pages.ps1` | Commit + push new episodes to GitHub Pages |
+| `scripts\publish_pages.ps1` | Commit + push new episodes and run logs to GitHub Pages (retries stranded commits) |
+| `scripts\publish_logs.ps1` | Sanitize + publish run logs to GitHub Pages |
+| `scripts\run_gui.ps1` / `scripts\install_desktop_shortcut.ps1` | Desktop GUI / its desktop shortcut |
+| `src\publish_logs.py` | Sanitize, index, and prune run logs for the Pages site |
+| `src\gui.py` | Desktop GUI (tkinter): latest Sunday, single date, date range, Force |
 | `.env.example` | Every setting, documented. Copy to `.env` |
 | `src\main.py` | One run: FTP → group → transcribe → clip → publish |
 | `src\sunday.py` | Latest-Sunday math, filename parsing, service grouping |
@@ -151,13 +158,58 @@ Setup or FTP problems (Microsoft Store Python stub, installer error
 | `docs\SPOTIFY.md` | Why Spotify is RSS, and the one-time feed setup |
 | `tests\` | Unit tests for the Sunday/grouping logic |
 
-## Other commands
+## Desktop GUI (hand runs, backfills, repairs)
+
+```powershell
+.\scripts\install_desktop_shortcut.ps1   # once: "OLOJ Homily Automation" on the desktop
+.\scripts\run_gui.ps1                    # or launch the GUI directly
+```
+
+The GUI (tkinter, standard library only, nothing new to install)
+builds and runs the same `run_pipeline.ps1` command, showing its
+output live. Pick **Latest Sunday**, a **single date**, or a **date
+range** (every Sunday in the range, one invocation), and tick
+**Force** to reprocess services already marked completed. It does
+not change the scheduled tasks — Sundays at 19:00 keep running
+unattended; the GUI is for hand runs.
 
 ```powershell
 .\scripts\run_pipeline.ps1 -Date 2026-10-18   # a specific Sunday
+.\scripts\run_pipeline.ps1 -Start 2026-09-01 -End 2026-09-30   # every Sunday in the range
 .\scripts\run_pipeline.ps1 -Force             # redo already-completed services
 .venv\Scripts\python.exe -m unittest discover -s tests -v
 ```
+
+**Repairing a gap, e.g. Sept 13 11:00:** in the GUI pick Single
+date `2026-09-13` with Force, or run
+`.\scripts\run_pipeline.ps1 -Date 2026-09-13 -Force`. Reprocessing
+replaces the legacy feed item for the same service (date + start
+time) instead of duplicating it, deletes its orphaned old MP3 name,
+and writes the missing Dropbox folder. If the recorder no longer
+holds the Sept 13 chunks, that run will report zero matching chunks
+for that Sunday — the remaining fallback is the podcast MP3 already
+on the Pages site, which is the same clipped homily audio.
+
+## Run logs, offsite
+
+Every real run (success or failure) publishes its log to the Pages
+site, sanitized, at
+`https://pivital-az.github.io/oloj-homily-automation/logs/` — newest
+first, with the target Sunday and completed / review / failed counts.
+That is how a failed unattended run gets diagnosed without the
+laptop: the log is the record, and it is pushed even when the
+pipeline itself failed. Sanitization redacts IP addresses, the laptop
+account name, email addresses, and password assignments; the raw
+`logs\` folder is never committed. The newest 30 runs are kept
+(`--keep` on `publish_logs.py`, or `LOG_PUBLISH_KEEP`).
+
+```powershell
+.\scripts\publish_logs.ps1   # publish the latest logs by hand, without a pipeline run
+```
+
+`publish_pages.ps1` also retries any commit stranded by an earlier
+failed push (it pushes whenever the branch is ahead of upstream
+after pulling, not only when the current run staged something).
 
 ## Safety rules built in
 

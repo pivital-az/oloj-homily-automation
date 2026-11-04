@@ -11,3 +11,8 @@ data/
 *.log
 .idea/
 .vscode/
+# Published run logs are the exception: docs/logs/ is the public
+# Pages copy (sanitized by src/publish_logs.py). Laptop logs in
+# logs/ above stay ignored, as do all other *.log files.
+!docs/logs/
+!docs/logs/*.log
