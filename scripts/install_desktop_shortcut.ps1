@@ -8,7 +8,10 @@
   It is per-user: it goes on the current user's desktop, so it works
   for the AudioVisual account the pipeline runs as, without needing
   administrator rights or a reboot/logoff. Run it once; re-running
-  it just replaces the shortcut with a fresh identical one.
+  it just replaces the shortcut with a fresh identical one. The
+  shortcut uses assets\oloj-icon.ico (gold microphone in a
+  stained-glass arch); if that file is missing the shortcut still
+  works, just with the default PowerShell icon.
 
   This does NOT change the scheduled tasks - Sundays at 19:00 keep
   running unattended. The GUI is for hand runs: a backfill, a retry,
@@ -34,6 +37,12 @@ $Shortcut.TargetPath = "powershell.exe"
 $Shortcut.Arguments = "-NoProfile -ExecutionPolicy Bypass -File `"$Runner`""
 $Shortcut.WorkingDirectory = $RepoRoot
 $Shortcut.Description = "Our Lady of Joy homily automation - pick a date or date range and convert it."
+$IconPath = Join-Path $RepoRoot "assets\oloj-icon.ico"
+if (Test-Path $IconPath) {
+    $Shortcut.IconLocation = $IconPath
+} else {
+    Write-Warning "Icon not found at $IconPath - shortcut will use the default icon."
+}
 $Shortcut.Save()
 
 Write-Host "Desktop shortcut created: $LinkPath" -ForegroundColor Green
