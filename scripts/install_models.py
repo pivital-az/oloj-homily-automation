@@ -6,13 +6,19 @@ Models (all run locally, nothing is sent to a cloud transcription API):
   * faster-whisper "medium" - Pass 2: re-transcribe only the homily
     clip for the published transcript.
     HF repo: Systran/faster-whisper-medium
+  * faster-whisper "base"   - OPTIONAL Pass 1 speed option only:
+    a smaller, faster model for detection (Pass 1 never publishes
+    its transcript). It is NOT downloaded by default - the default
+    stays small, and base must be tested on a saved service before
+    it is set as WHISPER_PASS1_MODEL. Download it with --only base.
+    HF repo: Systran/faster-whisper-base
 
 The optional Ollama LLM is pulled separately by install_models.ps1
 (it is a Windows app with its own model store, not a folder here).
 
 Usage:
     .venv\\Scripts\\python.exe scripts\\install_models.py [--models-dir PATH]
-                                                           [--only small|medium]
+                                                           [--only small|medium|base]
 """
 from __future__ import annotations
 
@@ -24,7 +30,21 @@ from pathlib import Path
 MODELS = {
     "small": "Systran/faster-whisper-small",
     "medium": "Systran/faster-whisper-medium",
+    "base": "Systran/faster-whisper-base",
 }
+
+# What a plain run downloads. "base" is deliberately excluded: it is
+# an opt-in Pass 1 experiment, not the pipeline default.
+DEFAULT_MODELS = ("small", "medium")
+
+
+def models_to_download(only: str | None) -> dict[str, str]:
+    """The {name: repo} set for a run: one model with --only, else
+    the defaults. Kept separate from main() so it is unit-testable
+    without downloading anything."""
+    if only is not None:
+        return {only: MODELS[only]}
+    return {name: MODELS[name] for name in DEFAULT_MODELS}
 
 
 def download(name: str, repo_id: str, models_dir: Path) -> Path:
@@ -56,7 +76,7 @@ def main() -> int:
         models_dir = (Path.cwd() / models_dir).resolve()
     models_dir.mkdir(parents=True, exist_ok=True)
 
-    wanted = {args.only: MODELS[args.only]} if args.only else MODELS
+    wanted = models_to_download(args.only)
     for name, repo_id in wanted.items():
         download(name, repo_id, models_dir)
 

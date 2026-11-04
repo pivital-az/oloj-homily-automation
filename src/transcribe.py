@@ -67,16 +67,30 @@ def _decode_16k_mono(path: Path, gain_db: float = 0.0) -> np.ndarray:
     return np.frombuffer(raw, dtype=np.float32)
 
 
-def transcribe_file(settings: Settings, audio_path: Path, model_name: str) -> list[dict]:
-    """Return segments: [{start, end, text, no_speech_prob}, ...]"""
+def transcribe_file(settings: Settings, audio_path: Path, model_name: str,
+                    beam_size: int = 5, word_timestamps: bool = True) -> list[dict]:
+    """Return segments: [{start, end, text, no_speech_prob}, ...]
+
+    Speed knobs, and where each is safe:
+      * beam_size=1 (greedy) is much faster than beam 5, at a small
+        wording cost. It is safe for Pass 1, which only needs the
+        Gospel/Creed markers and rough timestamps to locate the
+        homily - not publishable wording. Pass 2 keeps beam 5,
+        because its transcript IS published.
+      * word_timestamps=False is free in both passes: this function
+        never returns word timestamps (only segment start/end/text),
+        and nothing downstream uses them, yet faster-whisper pays
+        for an extra alignment pass to produce them. Turning them
+        off changes no published output.
+    """
     model = _load_model(settings, model_name)
     _mean_db, peak_db = volume_levels(audio_path)
     audio = _decode_16k_mono(audio_path, gain_db=gain_db_for_peak(peak_db))
     segments, _info = model.transcribe(
         audio,
         language=settings.whisper_language or None,
-        beam_size=5,
-        word_timestamps=True,
+        beam_size=beam_size,
+        word_timestamps=word_timestamps,
         vad_filter=True,
         vad_parameters={
             # Default threshold 0.5 discards borderline (quiet) speech

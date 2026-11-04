@@ -95,8 +95,14 @@ def process_service(settings: Settings, log: logging.Logger, state: State,
         state.mark_service(sid, "review", {"reason": "volume_gate"})
         return "review"
 
-    log.info("Pass 1: transcribing full service (%s)...", settings.whisper_pass1_model)
-    full_segments = transcribe_file(settings, full_mp3, settings.whisper_pass1_model)
+    # Pass 1 is detection only: greedy decoding (beam 1) and no word
+    # timestamps, which the pipeline never uses. Both are pure speed
+    # on a full hour of audio; the published transcript comes from
+    # Pass 2, which keeps beam 5.
+    log.info("Pass 1: transcribing full service (%s, beam 1, no word timestamps - detection only)...",
+             settings.whisper_pass1_model)
+    full_segments = transcribe_file(settings, full_mp3, settings.whisper_pass1_model,
+                                    beam_size=1, word_timestamps=False)
     (work / "full_segments.json").write_text(json.dumps(full_segments, indent=2), encoding="utf-8")
     if not full_segments:
         log.warning("Service %s -> review: Pass 1 transcription produced no speech segments.", sid)
@@ -122,8 +128,12 @@ def process_service(settings: Settings, log: logging.Logger, state: State,
 
     homily_mp3 = clip_mp3(full_mp3, span.start_s, span.end_s, work / "homily.mp3")
 
-    log.info("Pass 2: re-transcribing homily clip (%s)...", settings.whisper_pass2_model)
-    homily_segments = transcribe_file(settings, homily_mp3, settings.whisper_pass2_model)
+    # Pass 2 keeps beam 5 (published wording) but drops word
+    # timestamps, which nothing downstream uses.
+    log.info("Pass 2: re-transcribing homily clip (%s, beam 5, no word timestamps)...",
+             settings.whisper_pass2_model)
+    homily_segments = transcribe_file(settings, homily_mp3, settings.whisper_pass2_model,
+                                      beam_size=5, word_timestamps=False)
     transcript_text = segments_to_text(homily_segments)
     (work / "homily_segments.json").write_text(json.dumps(homily_segments, indent=2), encoding="utf-8")
 

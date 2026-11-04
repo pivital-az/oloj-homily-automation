@@ -24,7 +24,13 @@ two publishing steps: Dropbox (parish site) and the podcast feed.
    goes to `review\` with a reason file. It is never transcribed
    (Whisper hallucinates on silence) and never published.
 5. **Pass 1 transcription** — `faster-whisper` **small**, CPU int8,
-   whole service, with timestamps.
+   whole service, with timestamps. Pass 1 is detection only, so it
+   runs greedy (beam 1) with no word timestamps — both are pure
+   speed, since neither affects the published transcript. An
+   optional smaller/faster Pass 1 model, `base`, can be installed
+   with `.\scripts\install_models.ps1 -Only base` and set as
+   `WHISPER_PASS1_MODEL`, but test it on a saved service first: a
+   weaker Pass 1 can push more services to review.
 6. **Find the homily** — rule-based: after the Gospel closing, before
    the Creed / prayers of the faithful, with a duration sanity check
    and a confidence score. Optional local Ollama LLM can tighten the

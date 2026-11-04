@@ -6,11 +6,13 @@
 .EXAMPLE
   .\scripts\install_models.ps1
   .\scripts\install_models.ps1 -IncludeOllamaModel
+  .\scripts\install_models.ps1 -Only base   # opt-in Pass 1 speed option only (see install_models.py)
 #>
 [CmdletBinding()]
 param(
     [switch]$IncludeOllamaModel,
-    [string]$OllamaModel = "llama3.1:8b"
+    [string]$OllamaModel = "llama3.1:8b",
+    [string]$Only
 )
 
 $ErrorActionPreference = "Stop"
@@ -38,7 +40,9 @@ if (-not [System.IO.Path]::IsPathRooted($ModelsDir)) {
     $ModelsDir = Join-Path $RepoRoot $ModelsDir
 }
 
-& $VenvPython (Join-Path $RepoRoot "scripts\install_models.py") --models-dir $ModelsDir
+$InstallArgs = @((Join-Path $RepoRoot "scripts\install_models.py"), "--models-dir", $ModelsDir)
+if ($Only) { $InstallArgs += @("--only", $Only) }
+& $VenvPython @InstallArgs
 if ($LASTEXITCODE -ne 0) { throw "Model download failed." }
 
 if ($IncludeOllamaModel) {
