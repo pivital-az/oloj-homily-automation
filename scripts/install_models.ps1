@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-  Download the Whisper models (small + medium) into .\models, and
+  Download the Whisper models (small + large-v3-turbo) into .\models, and
   optionally pull the local LLM into Ollama.
 
 .EXAMPLE

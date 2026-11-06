@@ -3,8 +3,14 @@
 Models (all run locally, nothing is sent to a cloud transcription API):
   * faster-whisper "small"  - Pass 1: transcribe a whole service to
     locate the homily.  HF repo: Systran/faster-whisper-small
-  * faster-whisper "medium" - Pass 2: re-transcribe only the homily
-    clip for the published transcript.
+  * faster-whisper "large-v3-turbo" - Pass 2: re-transcribe only
+    the homily clip for the published transcript. Near-large-v3
+    accuracy at about medium speed (809M params, 4-layer decoder).
+    HF repo: mobiuslabsgmbh/faster-whisper-large-v3-turbo - note
+    this is NOT a Systran repo: Systran publishes no turbo model,
+    faster-whisper fetches it from mobiuslabsgmbh.
+  * faster-whisper "medium" - still downloadable with --only medium
+    as a fallback Pass 2 model.
     HF repo: Systran/faster-whisper-medium
   * faster-whisper "base"   - OPTIONAL Pass 1 speed option only:
     a smaller, faster model for detection (Pass 1 never publishes
@@ -18,7 +24,7 @@ The optional Ollama LLM is pulled separately by install_models.ps1
 
 Usage:
     .venv\\Scripts\\python.exe scripts\\install_models.py [--models-dir PATH]
-                                                           [--only small|medium|base]
+                                                           [--only small|medium|base|large-v3-turbo]
 """
 from __future__ import annotations
 
@@ -31,11 +37,12 @@ MODELS = {
     "small": "Systran/faster-whisper-small",
     "medium": "Systran/faster-whisper-medium",
     "base": "Systran/faster-whisper-base",
+    "large-v3-turbo": "mobiuslabsgmbh/faster-whisper-large-v3-turbo",
 }
 
 # What a plain run downloads. "base" is deliberately excluded: it is
 # an opt-in Pass 1 experiment, not the pipeline default.
-DEFAULT_MODELS = ("small", "medium")
+DEFAULT_MODELS = ("small", "large-v3-turbo")
 
 
 def models_to_download(only: str | None) -> dict[str, str]:

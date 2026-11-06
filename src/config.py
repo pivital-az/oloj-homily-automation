@@ -64,7 +64,7 @@ class Settings:
     whisper_device: str = "cpu"
     whisper_compute_type: str = "int8"
     whisper_pass1_model: str = "small"
-    whisper_pass2_model: str = "medium"
+    whisper_pass2_model: str = "large-v3-turbo"
     whisper_language: str = "en"
     whisper_cpu_threads: int = 10
     min_mean_volume_db: float = -50.0
@@ -118,7 +118,7 @@ class Settings:
             whisper_device=g("WHISPER_DEVICE", "cpu"),
             whisper_compute_type=g("WHISPER_COMPUTE_TYPE", "int8"),
             whisper_pass1_model=g("WHISPER_PASS1_MODEL", "small"),
-            whisper_pass2_model=g("WHISPER_PASS2_MODEL", "medium"),
+            whisper_pass2_model=g("WHISPER_PASS2_MODEL", "large-v3-turbo"),
             whisper_language=g("WHISPER_LANGUAGE", "en"),
             whisper_cpu_threads=int(g("WHISPER_CPU_THREADS", "10")),
             min_mean_volume_db=float(g("MIN_MEAN_VOLUME_DB", "-50")),

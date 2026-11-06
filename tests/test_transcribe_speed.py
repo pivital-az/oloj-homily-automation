@@ -56,7 +56,7 @@ class TestTranscribeSpeedKnobs(unittest.TestCase):
     def test_defaults_preserve_pass2_quality_settings(self):
         # Default call (beam 5) is what Pass 2 relies on for its
         # published wording; only word timestamps are dropped there.
-        segments = transcribe.transcribe_file(Settings(), Path("x.mp3"), "medium")
+        segments = transcribe.transcribe_file(Settings(), Path("x.mp3"), "large-v3-turbo")
         self.assertEqual(self.model.kwargs["beam_size"], 5)
         self.assertIs(self.model.kwargs["word_timestamps"], True)
         self.assertEqual(segments, [{"start": 0.0, "end": 5.0,
@@ -74,9 +74,22 @@ class TestBaseModelOption(unittest.TestCase):
         spec.loader.exec_module(mod)
         self.assertIn("base", mod.MODELS)
         self.assertEqual(mod.MODELS["base"], "Systran/faster-whisper-base")
-        self.assertEqual(set(mod.models_to_download(None)), {"small", "medium"})
+        self.assertEqual(set(mod.models_to_download(None)), {"small", "large-v3-turbo"})
         self.assertEqual(mod.models_to_download("base"),
                          {"base": "Systran/faster-whisper-base"})
+
+    def test_turbo_is_the_default_pass2_model_from_mobiuslabsgmbh(self):
+        import importlib.util
+        spec = importlib.util.spec_from_file_location(
+            "install_models",
+            Path(__file__).resolve().parent.parent / "scripts" / "install_models.py")
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        # Systran publishes no turbo repo - faster-whisper fetches it
+        # from mobiuslabsgmbh; a Systran repo id here would fail the download.
+        self.assertEqual(mod.MODELS["large-v3-turbo"],
+                         "mobiuslabsgmbh/faster-whisper-large-v3-turbo")
+        self.assertIn("large-v3-turbo", mod.models_to_download(None))
 
 
 if __name__ == "__main__":

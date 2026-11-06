@@ -37,7 +37,7 @@ two publishing steps: Dropbox (parish site) and the podcast feed.
    window (`ENABLE_OLLAMA`). Below `MIN_HOMILY_CONFIDENCE`, the service
    goes to `review\` instead of being published.
 7. **Clip + Pass 2** — ffmpeg clip (re-encoded, loudness-normalised),
-   then `faster-whisper` **medium** on the clip only for the final
+   then `faster-whisper` **large-v3-turbo** on the clip only for the final
    transcript quality.
 8. **Blog post** — light professional formatting only (title,
    metadata for Our Lady of Joy, no homilist name, short web
@@ -98,7 +98,7 @@ powershell -ExecutionPolicy Bypass -File .\scripts\setup_windows.ps1
 # 2. Fill in .env  (FTP address + credentials, DROPBOX_HOMILY_DIR, ...)
 notepad .env
 
-# 3. Download the models into .\models  (small + medium, ~2 GB total)
+# 3. Download the models into .\models  (small + large-v3-turbo, ~2 GB total)
 .\scripts\install_models.ps1                # add -IncludeOllamaModel if using Ollama
 
 # 4. Test the FTP connection to the recorder (uses the .env values).

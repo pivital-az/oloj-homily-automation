@@ -8,7 +8,7 @@ Default behaviour (what the scheduled task runs):
      one Sunday) - ALL services for that Sunday are converted.
   4. Per service: download new chunks -> stitch -> volume gate ->
      transcribe whole service (small) -> locate homily -> clip ->
-     re-transcribe clip (medium) -> format blog post ->
+     re-transcribe clip (large-v3-turbo) -> format blog post ->
      publish to Dropbox (parish site) -> add podcast episode (RSS ->
      Spotify, if enabled).
   5. Anything failing a gate goes to REVIEW_DIR with a reason file and

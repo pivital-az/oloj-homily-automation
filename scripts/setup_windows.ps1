@@ -157,7 +157,7 @@ foreach ($Folder in $Folders) {
     }
 }
 # Model sub-folders the installer downloads into.
-foreach ($ModelDir in @("faster-whisper-small", "faster-whisper-medium")) {
+foreach ($ModelDir in @("faster-whisper-small", "faster-whisper-medium", "faster-whisper-large-v3-turbo")) {
     $Path = Join-Path $RepoRoot (Join-Path "models" $ModelDir)
     if (-not (Test-Path $Path)) { New-Item -ItemType Directory -Path $Path | Out-Null }
 }
