@@ -1,0 +1,56 @@
+2026-10-23 12:01:55,414 INFO Target Sunday: 2026-09-13 (today local: 2026-10-23)
+2026-10-23 12:01:55,707 INFO Recorder holds 31 parseable MP3 chunk(s).
+2026-10-23 12:01:55,707 INFO 4 chunk(s) match 2026-09-13 -> 4 service(s).
+2026-10-23 12:01:55,709 INFO   2026-09-13 07:00 service (1 file(s))
+2026-10-23 12:01:55,709 INFO   2026-09-13 09:00 service (1 file(s))
+2026-10-23 12:01:55,710 INFO   2026-09-13 11:00 service (1 file(s))
+2026-10-23 12:01:55,710 INFO   2026-09-13 16:00 service (1 file(s))
+2026-10-23 12:02:52,432 INFO Service 2026-09-13_0700: 1 chunk(s)
+2026-10-23 12:02:54,795 INFO Volume: mean -49.8 dB, peak -20.8 dB
+2026-10-23 12:02:54,795 INFO Pass 1: transcribing full service (small)...
+2026-10-23 12:03:03,492 INFO Processing audio with duration 01:00:00.039
+2026-10-23 12:03:15,667 INFO VAD filter removed 28:42.535 of audio
+2026-10-23 12:11:19,090 INFO Homily located: 960-1764 s (13.4 min), confidence 0.70 via rules
+2026-10-23 12:11:19,090 INFO   detect: Start set after Gospel closing at 960s.
+2026-10-23 12:11:19,090 INFO   detect: No end marker found; end set at the first long silence (55s) after the homily, at 1764s - inferred boundary.
+2026-10-23 12:11:19,090 INFO   detect: Duration 13.4 min is in the expected homily range.
+2026-10-23 12:11:47,400 INFO Pass 2: re-transcribing homily clip (medium)...
+2026-10-23 12:11:57,889 INFO Processing audio with duration 13:27.440
+2026-10-23 12:12:00,966 INFO VAD filter removed 00:25.360 of audio
+2026-10-23 12:19:30,976 INFO Published to Dropbox/parish site: C:\Users\[user]\Dropbox\Homilies\2026-09-13_0700_homily-for-september-13-2026-7-00-am
+2026-10-23 12:19:31,011 INFO Service 2026-09-13_0700: completed
+2026-10-23 12:19:52,472 INFO Service 2026-09-13_0900: 1 chunk(s)
+2026-10-23 12:19:54,693 INFO Volume: mean -44.5 dB, peak -17.6 dB
+2026-10-23 12:19:54,693 INFO Pass 1: transcribing full service (small)...
+2026-10-23 12:20:02,476 INFO Processing audio with duration 01:00:00.039
+2026-10-23 12:20:14,264 INFO VAD filter removed 30:56.431 of audio
+2026-10-23 12:27:32,989 INFO Homily located: 812-1610 s (13.3 min), confidence 0.90 via rules
+2026-10-23 12:27:32,989 INFO   detect: Start set after Gospel closing at 811s.
+2026-10-23 12:27:32,989 INFO   detect: End set before post-homily marker at 1610s.
+2026-10-23 12:27:32,989 INFO   detect: Duration 13.3 min is in the expected homily range.
+2026-10-23 12:27:59,101 INFO Pass 2: re-transcribing homily clip (medium)...
+2026-10-23 12:28:01,412 INFO Processing audio with duration 13:22.100
+2026-10-23 12:28:04,584 INFO VAD filter removed 01:02.844 of audio
+2026-10-23 12:35:17,044 INFO Published to Dropbox/parish site: C:\Users\[user]\Dropbox\Homilies\2026-09-13_0900_homily-for-september-13-2026-9-00-am
+2026-10-23 12:35:17,079 INFO Service 2026-09-13_0900: completed
+2026-10-23 12:35:38,833 INFO Service 2026-09-13_1100: 1 chunk(s)
+2026-10-23 12:35:41,127 INFO Volume: mean -46.1 dB, peak -9.4 dB
+2026-10-23 12:35:41,127 INFO Pass 1: transcribing full service (small)...
+2026-10-23 12:35:48,589 INFO Processing audio with duration 59:59.099
+2026-10-23 12:35:59,115 INFO VAD filter removed 30:08.147 of audio
+2026-10-23 12:43:50,346 WARNING Service 2026-09-13_1100 -> review: Homily detection confidence too low to publish automatically. Span: HomilySpan(start_s=0.0, end_s=523.61, confidence=0.3, method='rules', notes=['No Gospel closing formula found; using first sustained speech as a guess.', 'End set at the long silence (39s) at 524s, earlier than the post-homily marker at 1573s - inferred boundary.', 'Duration 8.7 min is in the expected homily range.']); threshold 0.6.
+2026-10-23 12:43:50,415 INFO Service 2026-09-13_1100: review
+2026-10-23 12:44:12,051 INFO Service 2026-09-13_1600: 1 chunk(s)
+2026-10-23 12:44:14,184 INFO Volume: mean -42.8 dB, peak -16.9 dB
+2026-10-23 12:44:14,184 INFO Pass 1: transcribing full service (small)...
+2026-10-23 12:44:21,819 INFO Processing audio with duration 58:36.291
+2026-10-23 12:44:30,807 INFO VAD filter removed 36:15.579 of audio
+2026-10-23 12:50:08,534 INFO Homily located: 859-1321 s (7.7 min), confidence 0.70 via rules
+2026-10-23 12:50:08,536 INFO   detect: Start set after Gospel closing at 859s.
+2026-10-23 12:50:08,536 INFO   detect: No end marker found; end set at the first long silence (26s) after the homily, at 1321s - inferred boundary.
+2026-10-23 12:50:08,536 INFO   detect: Duration 7.7 min is in the expected homily range.
+2026-10-23 12:50:23,410 INFO Pass 2: re-transcribing homily clip (medium)...
+2026-10-23 12:50:24,294 INFO Processing audio with duration 07:46.050
+2026-10-23 12:50:25,617 INFO VAD filter removed 00:05.490 of audio
+2026-10-23 12:55:35,505 INFO Published to Dropbox/parish site: C:\Users\[user]\Dropbox\Homilies\2026-09-13_1600_homily-for-september-13-2026-4-00-pm
+2026-10-23 12:55:35,530 INFO Service 2026-09-13_1600: completed

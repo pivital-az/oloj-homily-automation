@@ -1,0 +1,13 @@
+2026-10-21 15:22:26,851 INFO Target Sunday: 2026-09-13 (today local: 2026-10-21)
+2026-10-21 15:22:27,136 INFO Recorder holds 31 parseable MP3 chunk(s).
+2026-10-21 15:22:27,136 INFO 4 chunk(s) match 2026-09-13 -> 4 service(s).
+2026-10-21 15:22:27,136 INFO   2026-09-13 07:00 service (1 file(s))
+2026-10-21 15:22:27,142 INFO   2026-09-13 09:00 service (1 file(s))
+2026-10-21 15:22:27,142 INFO   2026-09-13 11:00 service (1 file(s))
+2026-10-21 15:22:27,143 INFO   2026-09-13 16:00 service (1 file(s))
+2026-10-21 15:22:50,404 INFO Service 2026-09-13_0700: 1 chunk(s)
+2026-10-21 15:22:54,850 INFO Volume: mean -49.8 dB, peak -20.8 dB
+2026-10-21 15:22:54,850 INFO Pass 1: transcribing full service (small)...
+2026-10-21 15:23:07,349 INFO Processing audio with duration 01:00:00.039
+2026-10-21 15:23:26,686 INFO VAD filter removed 32:51.655 of audio
+2026-10-21 15:30:39,560 INFO Service 2026-09-13_0700: review

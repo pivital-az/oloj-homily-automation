@@ -1,0 +1,53 @@
+2026-11-03 11:22:09,567 INFO Target Sunday: 2026-11-01 (today local: 2026-11-03)
+2026-11-03 11:22:10,775 INFO Recorder holds 40 parseable MP3 chunk(s).
+2026-11-03 11:22:10,775 INFO 4 chunk(s) match 2026-11-01 -> 4 service(s).
+2026-11-03 11:22:10,775 INFO   2026-11-01 07:00 service (1 file(s))
+2026-11-03 11:22:10,775 INFO   2026-11-01 09:00 service (1 file(s))
+2026-11-03 11:22:10,775 INFO   2026-11-01 11:00 service (1 file(s))
+2026-11-03 11:22:10,775 INFO   2026-11-01 16:00 service (1 file(s))
+2026-11-03 11:22:45,920 INFO Service 2026-11-01_0700: 1 chunk(s)
+2026-11-03 11:22:49,931 INFO Volume: mean -50.2 dB, peak -22.2 dB
+2026-11-03 11:22:49,931 WARNING Service 2026-11-01_0700 -> review: Audio level gate failed: mean -50.2 dB, peak -22.2 dB (thresholds mean >= -50.0, peak >= -30.0). Likely a silent / very low-gain recording. Not transcribed (Whisper hallucinates on silence) and NOT published.
+2026-11-03 11:22:49,967 INFO Service 2026-11-01_0700: review
+2026-11-03 11:23:24,723 INFO Service 2026-11-01_0900: 1 chunk(s)
+2026-11-03 11:23:29,314 INFO Volume: mean -48.0 dB, peak -11.7 dB
+2026-11-03 11:23:29,314 INFO Pass 1: transcribing full service (small)...
+2026-11-03 11:23:52,362 INFO Processing audio with duration 01:00:00.039
+2026-11-03 11:24:09,694 INFO VAD filter removed 20:16.456 of audio
+2026-11-03 11:36:39,027 INFO Homily located: 1475-2176 s (11.7 min), confidence 0.70 via rules
+2026-11-03 11:36:39,027 INFO   detect: Start set after Gospel closing at 1475s.
+2026-11-03 11:36:39,027 INFO   detect: End set at the long silence (32s) at 2176s, earlier than the post-homily marker at 2208s - inferred boundary.
+2026-11-03 11:36:39,027 INFO   detect: Duration 11.7 min is in the expected homily range.
+2026-11-03 11:37:06,802 INFO Pass 2: re-transcribing homily clip (medium)...
+2026-11-03 11:37:20,399 INFO Processing audio with duration 11:44.460
+2026-11-03 11:37:23,812 INFO VAD filter removed 00:06.556 of audio
+2026-11-03 11:46:54,114 INFO Published to Dropbox/parish site: C:\Users\[user]\Dropbox\Homilies\2026-11-01_0900_homily-for-november-01-2026-9-00-am
+2026-11-03 11:46:54,201 INFO Service 2026-11-01_0900: completed
+2026-11-03 11:47:16,090 INFO Service 2026-11-01_1100: 1 chunk(s)
+2026-11-03 11:47:18,553 INFO Volume: mean -46.5 dB, peak -18.4 dB
+2026-11-03 11:47:18,553 INFO Pass 1: transcribing full service (small)...
+2026-11-03 11:47:32,198 INFO Processing audio with duration 01:00:00.039
+2026-11-03 11:47:47,822 INFO VAD filter removed 19:00.680 of audio
+2026-11-03 11:58:30,905 INFO Homily located: 1214-2034 s (13.7 min), confidence 0.70 via rules
+2026-11-03 11:58:30,905 INFO   detect: Start set after Gospel closing at 1199s.
+2026-11-03 11:58:30,905 INFO   detect: End set at the long silence (41s) at 2034s, earlier than the post-homily marker at 2074s - inferred boundary.
+2026-11-03 11:58:30,905 INFO   detect: Duration 13.7 min is in the expected homily range.
+2026-11-03 11:58:58,284 INFO Pass 2: re-transcribing homily clip (medium)...
+2026-11-03 11:59:00,016 INFO Processing audio with duration 13:43.690
+2026-11-03 11:59:02,276 INFO VAD filter removed 00:06.074 of audio
+2026-11-03 12:08:32,185 INFO Published to Dropbox/parish site: C:\Users\[user]\Dropbox\Homilies\2026-11-01_1100_homily-for-november-01-2026-11-00-am
+2026-11-03 12:08:32,266 INFO Service 2026-11-01_1100: completed
+2026-11-03 12:08:54,163 INFO Service 2026-11-01_1600: 1 chunk(s)
+2026-11-03 12:08:56,339 INFO Volume: mean -45.3 dB, peak -21.0 dB
+2026-11-03 12:08:56,339 INFO Pass 1: transcribing full service (small)...
+2026-11-03 12:09:03,678 INFO Processing audio with duration 01:00:00.039
+2026-11-03 12:09:13,739 INFO VAD filter removed 29:26.503 of audio
+2026-11-03 12:18:03,458 INFO Homily located: 1308-2184 s (14.6 min), confidence 0.70 via rules
+2026-11-03 12:18:03,458 INFO   detect: Start set after Gospel closing at 1308s.
+2026-11-03 12:18:03,458 INFO   detect: No end marker found; end set at the first long silence (47s) after the homily, at 2184s - inferred boundary.
+2026-11-03 12:18:03,458 INFO   detect: Duration 14.6 min is in the expected homily range.
+2026-11-03 12:18:31,340 INFO Pass 2: re-transcribing homily clip (medium)...
+2026-11-03 12:18:33,164 INFO Processing audio with duration 14:39.490
+2026-11-03 12:18:35,792 INFO VAD filter removed 01:44.850 of audio
+2026-11-03 12:28:22,772 INFO Published to Dropbox/parish site: C:\Users\[user]\Dropbox\Homilies\2026-11-01_1600_homily-for-november-01-2026-4-00-pm
+2026-11-03 12:28:22,854 INFO Service 2026-11-01_1600: completed

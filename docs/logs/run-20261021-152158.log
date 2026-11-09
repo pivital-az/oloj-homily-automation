@@ -1,0 +1,8 @@
+2026-10-21 15:21:58,359 INFO Target Sunday: 2026-09-13 (today local: 2026-10-21)
+2026-10-21 15:21:58,651 INFO Recorder holds 31 parseable MP3 chunk(s).
+2026-10-21 15:21:58,651 INFO 4 chunk(s) match 2026-09-13 -> 4 service(s).
+2026-10-21 15:21:58,651 INFO   2026-09-13 07:00 service (1 file(s))
+2026-10-21 15:21:58,651 INFO   2026-09-13 09:00 service (1 file(s))
+2026-10-21 15:21:58,651 INFO   2026-09-13 11:00 service (1 file(s))
+2026-10-21 15:21:58,651 INFO   2026-09-13 16:00 service (1 file(s))
+2026-10-21 15:21:58,651 INFO Dry run - nothing downloaded or processed.

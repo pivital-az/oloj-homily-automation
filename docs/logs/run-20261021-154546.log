@@ -1,0 +1,71 @@
+2026-10-21 15:45:46,239 INFO Target Sunday: 2026-09-13 (today local: 2026-10-21)
+2026-10-21 15:45:46,551 INFO Recorder holds 31 parseable MP3 chunk(s).
+2026-10-21 15:45:46,556 INFO 4 chunk(s) match 2026-09-13 -> 4 service(s).
+2026-10-21 15:45:46,556 INFO   2026-09-13 07:00 service (1 file(s))
+2026-10-21 15:45:46,556 INFO   2026-09-13 09:00 service (1 file(s))
+2026-10-21 15:45:46,557 INFO   2026-09-13 11:00 service (1 file(s))
+2026-10-21 15:45:46,557 INFO   2026-09-13 16:00 service (1 file(s))
+2026-10-21 15:46:08,060 INFO Service 2026-09-13_0700: 1 chunk(s)
+2026-10-21 15:46:11,125 INFO Volume: mean -49.8 dB, peak -20.8 dB
+2026-10-21 15:46:11,125 INFO Pass 1: transcribing full service (small)...
+2026-10-21 15:46:17,042 INFO Processing audio with duration 01:00:00.039
+2026-10-21 15:46:30,449 INFO VAD filter removed 32:51.655 of audio
+2026-10-21 15:54:01,653 INFO Homily located: 930-1764 s (13.9 min), confidence 0.70 via rules
+2026-10-21 15:54:01,653 INFO   detect: Start set after Gospel closing at 926s.
+2026-10-21 15:54:01,653 INFO   detect: No end marker found; end set at the first long silence (92s) after the homily, at 1764s - inferred boundary.
+2026-10-21 15:54:01,653 INFO   detect: Duration 13.9 min is in the expected homily range.
+2026-10-21 15:54:27,789 INFO Pass 2: re-transcribing homily clip (medium)...
+2026-10-21 15:54:33,611 INFO Processing audio with duration 13:57.350
+2026-10-21 15:54:36,450 INFO VAD filter removed 01:42.902 of audio
+2026-10-21 16:01:49,141 INFO Published to Dropbox/parish site: C:\Users\[user]\Dropbox\Homilies\2026-09-13_homily-for-september-13-2026
+2026-10-21 16:01:49,176 INFO Service 2026-09-13_0700: completed
+2026-10-21 16:02:15,966 INFO Service 2026-09-13_0900: 1 chunk(s)
+2026-10-21 16:02:18,143 INFO Volume: mean -44.5 dB, peak -17.6 dB
+2026-10-21 16:02:18,143 INFO Pass 1: transcribing full service (small)...
+2026-10-21 16:02:22,359 INFO Processing audio with duration 01:00:00.039
+2026-10-21 16:02:33,725 INFO VAD filter removed 33:18.791 of audio
+2026-10-21 16:09:57,320 INFO Homily located: 850-1610 s (12.7 min), confidence 0.90 via rules
+2026-10-21 16:09:57,320 INFO   detect: Start set after Gospel closing at 850s.
+2026-10-21 16:09:57,320 INFO   detect: End set before post-homily marker at 1610s.
+2026-10-21 16:09:57,320 INFO   detect: Duration 12.7 min is in the expected homily range.
+2026-10-21 16:10:40,587 INFO Pass 2: re-transcribing homily clip (medium)...
+2026-10-21 16:10:41,157 INFO Processing audio with duration 12:44.060
+2026-10-21 16:10:44,535 INFO VAD filter removed 01:26.400 of audio
+2026-10-21 16:17:53,602 INFO Published to Dropbox/parish site: C:\Users\[user]\Dropbox\Homilies\2026-09-13_homily-for-september-13-2026
+2026-10-21 16:17:53,621 INFO Service 2026-09-13_0900: completed
+2026-10-21 16:18:16,642 INFO Service 2026-09-13_1100: 1 chunk(s)
+2026-10-21 16:18:18,801 INFO Volume: mean -46.1 dB, peak -9.4 dB
+2026-10-21 16:18:18,801 INFO Pass 1: transcribing full service (small)...
+2026-10-21 16:18:25,454 INFO Processing audio with duration 59:59.099
+2026-10-21 16:18:37,824 INFO VAD filter removed 32:35.051 of audio
+2026-10-21 16:26:08,320 INFO Homily located: 980-1574 s (9.9 min), confidence 0.90 via rules
+2026-10-21 16:26:08,320 INFO   detect: Start set after Gospel closing at 958s.
+2026-10-21 16:26:08,320 INFO   detect: End set before post-homily marker at 1574s.
+2026-10-21 16:26:08,320 INFO   detect: Duration 9.9 min is in the expected homily range.
+2026-10-21 16:26:42,910 INFO Pass 2: re-transcribing homily clip (medium)...
+2026-10-21 16:26:43,432 INFO Processing audio with duration 09:58.120
+2026-10-21 16:26:45,283 INFO VAD filter removed 01:04.880 of audio
+2026-10-21 16:33:06,096 INFO Published to Dropbox/parish site: C:\Users\[user]\Dropbox\Homilies\2026-09-13_homily-for-september-13-2026
+2026-10-21 16:33:06,121 INFO Service 2026-09-13_1100: completed
+2026-10-21 16:34:37,164 ERROR Service 2026-09-13_1600 FAILED: Could not connect to the recorder at [recorder-host]:21 after 3 attempts (timed out). Check the recorder is on and the laptop is on its network, then re-run.
+Traceback (most recent call last):
+  File "C:\Users\[user]\oloj-homily-automation\src\ftp_client.py", line 25, in __enter__
+    ftp.connect(self.s.ftp_host, self.s.ftp_port, timeout=self.s.ftp_timeout)
+  File "C:\Program Files\Python312\Lib\ftplib.py", line 158, in connect
+    self.sock = socket.create_connection((self.host, self.port), self.timeout,
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\Python312\Lib\socket.py", line 865, in create_connection
+    raise exceptions[0]
+  File "C:\Program Files\Python312\Lib\socket.py", line 850, in create_connection
+    sock.connect(sa)
+TimeoutError: timed out
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\[user]\oloj-homily-automation\src\main.py", line 203, in main
+    with FtpRecorder(settings) as recorder:
+         ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\[user]\oloj-homily-automation\src\ftp_client.py", line 39, in __enter__
+    raise ConnectionError(
+ConnectionError: Could not connect to the recorder at [recorder-host]:21 after 3 attempts (timed out). Check the recorder is on and the laptop is on its network, then re-run.
