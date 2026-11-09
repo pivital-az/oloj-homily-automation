@@ -23,6 +23,16 @@ Controls:
     the reprocessed 11:00 replaces the old feed item instead of
     duplicating it).
   * Dry run: list the services the run would process, publish nothing.
+  * Open recorder interface: opens the DN-900R's web interface in the
+    default browser - the recorder at the FTP_HOST address from .env,
+    over HTTP. This is where its power/network settings live.
+  * Open Dropbox folder: opens the Dropbox web view of the homily
+    folder (DROPBOX_HOMILY_DIR from .env), i.e. what was published.
+
+Branding: the window wears the Our Lady of Joy colours - the deep
+violet and gold of the parish icon (assets/oloj-icon.png, a gold
+microphone in a stained-glass arch) on the warm cream of the
+published homily pages, with a Georgia serif header like the site.
 
 Only the standard library is used (tkinter ships with Python), so
 there is nothing new to install on the parish laptop.
@@ -30,12 +40,14 @@ there is nothing new to install on the parish laptop.
 from __future__ import annotations
 
 import queue
+import re
 import subprocess
 import sys
 import threading
 import webbrowser
 from datetime import date
 from pathlib import Path
+from urllib.parse import quote
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
@@ -44,6 +56,17 @@ from sunday import sundays_between  # noqa: E402
 REPO_ROOT = Path(__file__).resolve().parent.parent
 RUN_PIPELINE = REPO_ROOT / "scripts" / "run_pipeline.ps1"
 PAGES_LOGS_URL = "https://pivital-az.github.io/oloj-homily-automation/logs/"
+DROPBOX_HOME_URL = "https://www.dropbox.com/home"
+
+# Our Lady of Joy branding: deep violet + gold, sampled from the
+# parish icon (assets/oloj-icon.png), on the warm cream of the
+# published homily pages (docs/index.html).
+PARISH_PURPLE = "#240043"
+PARISH_GOLD = "#d9a441"
+PARISH_CREAM = "#f7f1e3"
+PARISH_INK = "#2e2438"
+CONSOLE_BG = "#1d0033"
+CONSOLE_FG = "#f3e9d2"
 
 
 def parse_date_str(text: str) -> date:
@@ -56,6 +79,40 @@ def parse_date_str(text: str) -> date:
         raise ValueError(f"'{text}' is not a valid date - use YYYY-MM-DD.") from None
 
 
+def recorder_web_url(ftp_host: str) -> str:
+    """Web-interface URL for the DN-900R: the FTP host, over HTTP.
+
+    The recorder's web interface lives on the same address as its FTP
+    server (FTP_HOST in .env, usually a bare IP like 10.16.10.232).
+    A host that already carries a scheme is used as given."""
+    host = (ftp_host or "").strip()
+    if "://" in host:
+        return host.rstrip("/") + "/"
+    return f"http://{host}/"
+
+
+def dropbox_web_url(dropbox_dir) -> str:
+    """Dropbox web URL for the local homily folder.
+
+    DROPBOX_HOMILY_DIR is a folder inside the laptop's Dropbox sync
+    folder; on the web, the same folder is dropbox.com/home/<path
+    below the Dropbox root>. The path below the first component that
+    starts with "Dropbox" is that relative path (this also covers
+    names like "Dropbox (Personal)"). Anything unrecognized - no
+    dir configured, or no Dropbox component in it - falls back to
+    the Dropbox home page rather than guessing a wrong folder."""
+    if not dropbox_dir:
+        return DROPBOX_HOME_URL
+    parts = [p for p in re.split(r"[\\/]+", str(dropbox_dir)) if p]
+    for i, part in enumerate(parts):
+        if part.lower().startswith("dropbox"):
+            rest = parts[i + 1:]
+            if not rest:
+                return DROPBOX_HOME_URL
+            return DROPBOX_HOME_URL + "/" + "/".join(quote(p) for p in rest)
+    return DROPBOX_HOME_URL
+
+
 def build_run_args(mode: str, single: str = "", start: str = "",
                    end: str = "", force: bool = False,
                    dry_run: bool = False) -> list[str]:
@@ -64,8 +121,7 @@ def build_run_args(mode: str, single: str = "", start: str = "",
     Raises ValueError on anything that would make the run do the
     wrong thing or nothing at all: a bad date, a range with no
     Sunday, a start after its end. Mode is one of "latest",
-    "single", "range".
-    """
+    "single", "range"."""
     args: list[str] = []
     if mode == "latest":
         pass
@@ -109,8 +165,25 @@ class Gui:
         self.root = root
         self.proc: subprocess.Popen | None = None
         self.output_queue: queue.Queue[str] = queue.Queue()
-        root.title("OLOJ Homily Automation")
-        root.geometry("760x560")
+        root.title("Our Lady of Joy — Homily Automation")
+        root.geometry("800x620")
+        icon = REPO_ROOT / "assets" / "oloj-icon.ico"
+        if icon.exists():
+            try:
+                root.iconbitmap(str(icon))
+            except Exception:
+                pass  # The icon is decoration; never block startup on it.
+        self._apply_branding()
+
+        # --- Header: parish banner ---------------------------------
+        header = tk.Frame(root, bg=PARISH_PURPLE)
+        header.pack(fill="x")
+        tk.Label(header, text="OLOJ Homily Automation",
+                 bg=PARISH_PURPLE, fg=PARISH_GOLD,
+                 font=("Georgia", 16, "bold")).pack(anchor="w", padx=14, pady=(10, 0))
+        tk.Label(header, text="Our Lady of Joy Roman Catholic Church · Carefree, AZ",
+                 bg=PARISH_PURPLE, fg=PARISH_CREAM,
+                 font=("Georgia", 10, "italic")).pack(anchor="w", padx=14, pady=(0, 10))
 
         frame = ttk.Frame(root, padding=12)
         frame.pack(fill="both", expand=True)
@@ -155,19 +228,53 @@ class Gui:
         # --- Buttons + status --------------------------------------
         buttons = ttk.Frame(frame)
         buttons.pack(fill="x", pady=10)
-        self.run_btn = ttk.Button(buttons, text="Run", command=self.on_run)
+        self.run_btn = ttk.Button(buttons, text="Run", command=self.on_run,
+                                  style="Run.TButton")
         self.run_btn.pack(side="left", padx=(0, 8))
         self.stop_btn = ttk.Button(buttons, text="Stop", command=self.on_stop,
                                    state="disabled")
         self.stop_btn.pack(side="left", padx=(0, 8))
         ttk.Button(buttons, text="Open run logs online",
                    command=lambda: webbrowser.open(PAGES_LOGS_URL)).pack(side="left")
+        ttk.Button(buttons, text="Open recorder interface",
+                   command=self.on_open_recorder).pack(side="left", padx=(8, 0))
+        ttk.Button(buttons, text="Open Dropbox folder",
+                   command=self.on_open_dropbox).pack(side="left", padx=(8, 0))
         self.status = ttk.Label(frame, text="Idle.")
         self.status.pack(anchor="w")
 
         # --- Output ------------------------------------------------
-        self.output = scrolledtext.ScrolledText(frame, height=22, state="disabled")
+        self.output = scrolledtext.ScrolledText(
+            frame, height=22, state="disabled",
+            bg=CONSOLE_BG, fg=CONSOLE_FG, insertbackground=PARISH_GOLD,
+            font=("Consolas", 10))
         self.output.pack(fill="both", expand=True, pady=(8, 0))
+
+    def _apply_branding(self) -> None:
+        """OLOJ colours on the standard widgets (see palette above).
+
+        ttk needs the "clam" theme before it will take custom colours
+        on Windows; if a platform refuses the theme switch, the GUI
+        still works, just in the platform's default dress."""
+        import tkinter as tk
+        from tkinter import ttk
+
+        self.root.configure(bg=PARISH_CREAM)
+        style = ttk.Style(self.root)
+        try:
+            style.theme_use("clam")
+        except tk.TclError:
+            pass
+        style.configure("TFrame", background=PARISH_CREAM)
+        style.configure("TLabel", background=PARISH_CREAM, foreground=PARISH_INK)
+        style.configure("TRadiobutton", background=PARISH_CREAM, foreground=PARISH_INK)
+        style.configure("TCheckbutton", background=PARISH_CREAM, foreground=PARISH_INK)
+        style.configure("TButton", padding=(10, 4))
+        style.configure("Run.TButton", background=PARISH_GOLD,
+                        foreground=PARISH_PURPLE, font=("Segoe UI", 10, "bold"))
+        style.map("Run.TButton",
+                  background=[("active", "#eabd63"), ("disabled", "#d8c493")],
+                  foreground=[("disabled", "#6f6558")])
 
     def _append(self, text: str) -> None:
         self.output.configure(state="normal")
@@ -231,6 +338,36 @@ class Gui:
             self._append("\n[gui] Stopped by the user. "
                          "Already-completed services stay completed; "
                          "re-run to continue.\n")
+
+    def on_open_recorder(self) -> None:
+        """Open the DN-900R web interface (the FTP_HOST address)."""
+        from tkinter import messagebox
+        try:
+            from config import Settings
+            host = Settings.load().ftp_host
+        except Exception as exc:
+            messagebox.showerror("Recorder interface",
+                                 f"Could not read the settings: {exc}")
+            return
+        if not host:
+            messagebox.showerror(
+                "Recorder interface",
+                "FTP_HOST is not set in .env, so the recorder's address "
+                "is unknown.")
+            return
+        webbrowser.open(recorder_web_url(host))
+
+    def on_open_dropbox(self) -> None:
+        """Open the Dropbox web view of the published homily folder."""
+        from tkinter import messagebox
+        try:
+            from config import Settings
+            dropbox_dir = Settings.load().dropbox_dir
+        except Exception as exc:
+            messagebox.showerror("Dropbox folder",
+                                 f"Could not read the settings: {exc}")
+            return
+        webbrowser.open(dropbox_web_url(dropbox_dir))
 
 
 def main() -> int:
