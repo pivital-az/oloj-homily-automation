@@ -325,9 +325,15 @@ class Gui:
         self.status.configure(text="Running… (output below; this takes about 15 minutes per hour-long service)")
         self.run_btn.configure(state="disabled")
         self.stop_btn.configure(state="normal")
+        # CREATE_NO_WINDOW: the pipeline's output is piped into this
+        # window, so its powershell.exe needs no console of its own -
+        # a stray console invites the same close-it-and-kill-the-run
+        # accident the pythonw.exe launcher avoids (see run_gui.ps1).
+        # The flag only exists on Windows; elsewhere this is 0.
         self.proc = subprocess.Popen(
             cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
             text=True, cwd=str(REPO_ROOT),
+            creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0),
         )
         threading.Thread(target=self._reader, daemon=True).start()
         self.root.after(200, self._poll)
