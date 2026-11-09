@@ -1,0 +1,27 @@
+2026-11-09 13:23:00,988 INFO Target Sunday(s): 2026-11-08 (today local: 2026-11-09)
+2026-11-09 13:23:01,371 INFO Recorder holds 45 parseable MP3 chunk(s).
+2026-11-09 13:23:01,372 INFO 4 chunk(s) match 2026-11-08 -> 4 service(s).
+2026-11-09 13:23:01,372 INFO   2026-11-08 07:00 service (1 file(s))
+2026-11-09 13:23:01,372 INFO   2026-11-08 09:00 service (1 file(s))
+2026-11-09 13:23:01,372 INFO   2026-11-08 11:00 service (1 file(s))
+2026-11-09 13:23:01,374 INFO   2026-11-08 16:00 service (1 file(s))
+2026-11-09 13:23:01,374 INFO Processing Sunday 2026-11-08 (4 service(s)).
+2026-11-09 13:23:23,144 INFO Service 2026-11-08_0700: 1 chunk(s)
+2026-11-09 13:23:27,357 INFO Volume: mean -50.0 dB, peak -11.4 dB
+2026-11-09 13:23:27,357 INFO Pass 1: transcribing full service (small, beam 1, no word timestamps - detection only)...
+2026-11-09 13:23:42,160 INFO Processing audio with duration 01:00:00.039
+2026-11-09 13:24:01,626 INFO VAD filter removed 27:39.207 of audio
+2026-11-09 13:28:03,362 INFO Homily located: 1256-2258 s (16.7 min), confidence 0.90 via rules
+2026-11-09 13:28:03,362 INFO   detect: Start set after Gospel closing at 1256s.
+2026-11-09 13:28:03,362 INFO   detect: End set before post-homily marker at 2258s.
+2026-11-09 13:28:03,362 INFO   detect: Duration 16.7 min is in the expected homily range.
+2026-11-09 13:29:03,223 INFO Pass 2: re-transcribing homily clip (large-v3-turbo, beam 5, no word timestamps)...
+2026-11-09 13:29:13,452 INFO Processing audio with duration 16:46.590
+2026-11-09 13:29:18,585 INFO VAD filter removed 00:53.928 of audio
+2026-11-09 13:35:52,815 INFO Published to Dropbox/parish site: C:\Users\[user]\Dropbox\Homilies\2026-11-08_0700_homily-for-november-08-2026-7-00-am
+2026-11-09 13:35:52,868 INFO Service 2026-11-08_0700: completed
+2026-11-09 13:36:14,626 INFO Service 2026-11-08_0900: 1 chunk(s)
+2026-11-09 13:36:16,907 INFO Volume: mean -47.0 dB, peak -21.6 dB
+2026-11-09 13:36:16,907 INFO Pass 1: transcribing full service (small, beam 1, no word timestamps - detection only)...
+2026-11-09 13:36:24,092 INFO Processing audio with duration 59:59.047
+2026-11-09 13:36:42,571 INFO VAD filter removed 23:46.967 of audio
