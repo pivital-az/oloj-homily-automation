@@ -9,7 +9,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
 
-from gui import build_command, build_run_args
+from gui import (build_command, build_run_args, dropbox_web_url,
+                 recorder_web_url)
 
 
 class TestBuildRunArgs(unittest.TestCase):
@@ -50,6 +51,33 @@ class TestBuildRunArgs(unittest.TestCase):
         self.assertTrue(any(c.endswith("run_pipeline.ps1") for c in cmd))
         self.assertIn("-Date", cmd)
         self.assertIn("-Force", cmd)
+
+
+class TestLinkUrls(unittest.TestCase):
+    def test_recorder_url_from_bare_ip(self):
+        self.assertEqual(recorder_web_url("10.16.10.232"),
+                         "http://10.16.10.232/")
+
+    def test_recorder_url_keeps_existing_scheme(self):
+        self.assertEqual(recorder_web_url("http://10.16.10.232"),
+                         "http://10.16.10.232/")
+
+    def test_dropbox_url_below_dropbox_root(self):
+        self.assertEqual(
+            dropbox_web_url(r"C:\Users\AudioVisual\Dropbox\OLOJ\Homilies"),
+            "https://www.dropbox.com/home/OLOJ/Homilies")
+
+    def test_dropbox_url_quotes_spaces(self):
+        self.assertEqual(
+            dropbox_web_url(r"C:\Users\AudioVisual\Dropbox\Our Lady of Joy\Homilies"),
+            "https://www.dropbox.com/home/Our%20Lady%20of%20Joy/Homilies")
+
+    def test_dropbox_url_falls_back_to_home(self):
+        self.assertEqual(dropbox_web_url(None), "https://www.dropbox.com/home")
+        self.assertEqual(dropbox_web_url(r"C:\Users\AudioVisual\Dropbox"),
+                         "https://www.dropbox.com/home")
+        self.assertEqual(dropbox_web_url(r"D:\Elsewhere\Homilies"),
+                         "https://www.dropbox.com/home")
 
 
 if __name__ == "__main__":
