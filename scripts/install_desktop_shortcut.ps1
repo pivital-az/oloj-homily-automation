@@ -3,13 +3,15 @@
   Put an "OLOJ Homily Automation" shortcut on the Windows desktop.
 
 .DESCRIPTION
-  The shortcut launches scripts\run_gui.ps1 (the desktop GUI) in a
-  normal PowerShell window, with the repo as its working directory.
+  The shortcut launches scripts\run_gui.ps1 (the desktop GUI) with
+  the launcher's PowerShell window hidden - run_gui.ps1 starts the
+  GUI with pythonw.exe and exits, so no terminal window ever sits
+  behind the GUI. It uses the repo as its working directory.
   It is per-user: it goes on the current user's desktop, so it works
   for the AudioVisual account the pipeline runs as, without needing
   administrator rights or a reboot/logoff. Run it once; re-running
-  it just replaces the shortcut with a fresh identical one. The
-  shortcut uses assets\oloj-icon.ico (gold microphone in a
+  it just replaces the shortcut with a fresh identical one.
+  The shortcut uses assets\oloj-icon.ico (gold microphone in a
   stained-glass arch); if that file is missing the shortcut still
   works, just with the default PowerShell icon.
 
@@ -34,7 +36,7 @@ $LinkPath = Join-Path $Desktop "$Name.lnk"
 $Shell = New-Object -ComObject WScript.Shell
 $Shortcut = $Shell.CreateShortcut($LinkPath)
 $Shortcut.TargetPath = "powershell.exe"
-$Shortcut.Arguments = "-NoProfile -ExecutionPolicy Bypass -File `"$Runner`""
+$Shortcut.Arguments = "-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File `"$Runner`""
 $Shortcut.WorkingDirectory = $RepoRoot
 $Shortcut.Description = "Our Lady of Joy homily automation - pick a date or date range and convert it."
 $IconPath = Join-Path $RepoRoot "assets\oloj-icon.ico"
