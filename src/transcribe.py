@@ -29,7 +29,8 @@ _model_cache: dict[str, object] = {}
 # tokens share the model's context window.
 INITIAL_PROMPT = (
     "A homily at a Catholic Mass. Scripture, the Gospel, Eucharist, "
-    "Communion, parish, priest, deacon, disciples, forgiveness, mercy, Amen."
+    "Communion, parish, priest, deacon, disciples, forgiveness, mercy, Amen. "
+    "Let us pray to the Lord. I believe in one God."
 )
 
 TARGET_PEAK_DB = -1.0

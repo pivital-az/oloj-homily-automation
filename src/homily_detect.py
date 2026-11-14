@@ -60,6 +60,11 @@ POST_HOMILY_MARKERS = (
     "lord hear our prayer",
     "lord, hear our prayer",
     "we pray to the lord",
+    # Intercessions / parish prayer - the bleed in the Oct 25 and
+    # Nov 1 4:00 PM posts ran past the homily into these.
+    "let us pray to the lord",
+    "please remain standing",
+    "our parish prayer",
     # Offertory / Liturgy of the Eucharist.
     "blessed are you lord god of all creation",
     "blessed are you, lord god of all creation",
@@ -141,6 +146,34 @@ def _first_long_gap(segments: list[dict], from_index: int,
         content_after = segments[-1]["end"] - segments[i + 1]["start"]
         if gap >= min_gap_s and content_after >= 60.0:
             return i
+    return None
+
+
+def find_post_homily_cutoff(segments: list[dict], min_homily_s: float = 180.0,
+                            min_tail_s: float = 60.0) -> int | None:
+    """Index of the first segment of post-homily liturgy inside a
+    re-transcribed homily clip, or None.
+
+    Pass 2 re-transcribes the clipped homily, so its segments should
+    all be homily - but when the Pass 1 clip end ran slightly late,
+    the tail of the clip is Creed / intercessions / parish prayer.
+    Cut before the first post-homily marker that starts at least
+    min_homily_s into the clip and has at least min_tail_s of
+    transcript after it: a passing mention mid-homily has no such
+    sustained liturgy tail, and a marker in the first three minutes
+    is the homilist quoting the liturgy, not the liturgy itself."""
+    if not segments:
+        return None
+    start_s = float(segments[0]["start"])
+    end_s = float(segments[-1]["end"])
+    for i in range(len(segments)):
+        if not any(m in _window_text(segments, i) for m in POST_HOMILY_MARKERS):
+            continue
+        if float(segments[i]["start"]) - start_s < min_homily_s:
+            continue
+        if end_s - float(segments[i]["start"]) < min_tail_s:
+            continue
+        return i
     return None
 
 

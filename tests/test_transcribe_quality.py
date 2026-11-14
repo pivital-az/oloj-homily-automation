@@ -5,11 +5,20 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from blog import paragraphs_from_segments
-from transcribe import gain_db_for_peak
+from transcribe import INITIAL_PROMPT, gain_db_for_peak
 
 
 def seg(start, end, text):
     return {"start": start, "end": end, "text": text}
+
+
+class TestInitialPrompt(unittest.TestCase):
+    def test_includes_post_homily_liturgical_phrases(self):
+        # The Pass 2 prompt should bias decoding toward the phrases
+        # that mark the homily's end, so the re-transcription hears
+        # the Creed / intercessions transition instead of blurring it.
+        self.assertIn("Let us pray to the Lord", INITIAL_PROMPT)
+        self.assertIn("I believe in one God", INITIAL_PROMPT)
 
 
 class TestGain(unittest.TestCase):

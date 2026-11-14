@@ -1,1 +1,271 @@
-IiIiRm9ybWF0IGEgY2xlYW5lZCBob21pbHkgdHJhbnNjcmlwdCBhcyBhIHByb2Zlc3Npb25hbCBibG9nIHBvc3QuCgpMaWdodCBmb3JtYXR0aW5nIG9ubHk6IHRoZSBob21pbGlzdCdzIHdvcmRzIGFyZSBub3QgcmV3cml0dGVuLiBUaGUKZm9ybWF0dGluZyBhZGRzIGEgdGl0bGUsIG1ldGFkYXRhLCBzaG9ydCB3ZWIgcGFyYWdyYXBocywgYSBwdWxsIHF1b3RlCmFuZCAob3B0aW9uYWxseSwgdmlhIHRoZSBsb2NhbCBMTE0pIHN1YmhlYWRpbmdzLiBJZiBubyBMTE0gdGl0bGUgaXMKYXZhaWxhYmxlLCB0aGUgdGl0bGUgZmFsbHMgYmFjayB0byAiSG9taWx5IGZvciA8ZGF0ZT4g4oCUIDxNYXNzIHRpbWU+IiAtCmFjY3VyYXRlIGFuZCBwcm9mZXNzaW9uYWwsIG5ldmVyIGludmVudGVkIHRoZW9sb2d5LgoiIiIKZnJvbSBfX2Z1dHVyZV9fIGltcG9ydCBhbm5vdGF0aW9ucwoKaW1wb3J0IGpzb24KaW1wb3J0IHJlCmZyb20gZGF0ZXRpbWUgaW1wb3J0IGRhdGUsIGRhdGV0aW1lCgpmcm9tIGNvbmZpZyBpbXBvcnQgU2V0dGluZ3MKCkJPT0tTID0gWwogICAgIkdlbmVzaXMiLCAiRXhvZHVzIiwgIklzYWlhaCIsICJKZXJlbWlhaCIsICJFemVraWVsIiwgIkRhbmllbCIsCiAgICAiU2lyYWNoIiwgIlBzYWxtcyIsICJQcm92ZXJicyIsICJXaXNkb20iLAogICAgIk1hdHRoZXciLCAiTWFyayIsICJMdWtlIiwgIkpvaG4iLCAiQWN0cyIsCiAgICAiUm9tYW5zIiwgIkNvcmludGhpYW5zIiwgIkdhbGF0aWFucyIsICJFcGhlc2lhbnMiLCAiUGhpbGlwcGlhbnMiLAogICAgIkNvbG9zc2lhbnMiLCAiVGhlc3NhbG9uaWFucyIsICJUaW1vdGh5IiwgIlRpdHVzIiwgIkhlYnJld3MiLAogICAgIkphbWVzIiwgIlBldGVyIiwgIlJldmVsYXRpb24iLApdCgoKZGVmIF95YW1sKHZhbHVlOiBzdHIpIC0+IHN0cjoKICAgICIiIlF1b3RlIGEgc2NhbGFyIGZvciB0aGUgZnJvbnQgbWF0dGVyLiBUaXRsZXMvZXhjZXJwdHMgY29tZSBmcm9tIGEKICAgIGxvY2FsIExMTSBvciB0cmFuc2NyaXB0IHRleHQgYW5kIG1heSBjb250YWluIHF1b3RlcyAtIGVzY2FwZSB0aGVtIHNvCiAgICB0aGUgcGFyaXNoIHNpdGUncyBZQU1MIHBhcnNlciBkb2VzIG5vdCBicmVhay4iIiIKICAgIHJldHVybiAnIicgKyB2YWx1ZS5yZXBsYWNlKCJcXCIsICJcXFxcIikucmVwbGFjZSgnIicsICdcXCInKSArICciJwoKCmRlZiBzbHVnaWZ5KHRleHQ6IHN0cikgLT4gc3RyOgogICAgc2x1ZyA9IHJlLnN1YihyIlteYS16MC05XSsiLCAiLSIsIHRleHQubG93ZXIoKSkuc3RyaXAoIi0iKQogICAgcmV0dXJuIHNsdWcgb3IgImhvbWlseSIKCgpfU0VOVEVOQ0VfU1BMSVQgPSByZS5jb21waWxlKHIiKD88PVsuIT/igKZdKVxzKyIpCgoKZGVmIF9zZW50ZW5jZXNfd2l0aF9nYXBzKHNlZ21lbnRzOiBsaXN0W2RpY3RdKSAtPiBsaXN0W3R1cGxlW3N0ciwgZmxvYXRdXToKICAgICIiIkZsYXR0ZW4gc2VnbWVudHMgaW50byAoc2VudGVuY2UsIGdhcF9iZWZvcmVfaXQpIHBhaXJzLgoKICAgIFdoaXNwZXIgcGFja3Mgc2V2ZXJhbCBzZW50ZW5jZXMgaW50byBvbmUgc2VnbWVudCBhbmQganVzdCBhcyBvZnRlbgogICAgZW5kcyBhIHNlZ21lbnQgbWlkLXNlbnRlbmNlLCBzbyBzZW50ZW5jZSBib3VuZGFyaWVzIG11c3QgYmUgZm91bmQKICAgIGluIHRoZSB0ZXh0IGl0c2VsZiwgbm90IGF0IHNlZ21lbnQgZWRnZXMuIEEgc2VnbWVudCdzIHBhdXNlIGdhcCBpcwogICAgYXR0YWNoZWQgdG8gaXRzIGZpcnN0IHNlbnRlbmNlOyBsYXRlciBzZW50ZW5jZXMgaW5oZXJpdCAwLiIiIgogICAgb3V0OiBsaXN0W3R1cGxlW3N0ciwgZmxvYXRdXSA9IFtdCiAgICBwcmV2X2VuZDogZmxvYXQgfCBOb25lID0gTm9uZQogICAgZm9yIHNlZyBpbiBzZWdtZW50czoKICAgICAgICB0ZXh0ID0gc2VnWyJ0ZXh0Il0uc3RyaXAoKQogICAgICAgIGlmIG5vdCB0ZXh0OgogICAgICAgICAgICBjb250aW51ZQogICAgICAgIGdhcCA9IChzZWdbInN0YXJ0Il0gLSBwcmV2X2VuZCkgaWYgcHJldl9lbmQgaXMgbm90IE5vbmUgZWxzZSAwLjAKICAgICAgICBwcmV2X2VuZCA9IHNlZ1siZW5kIl0KICAgICAgICBmb3IgaSwgc2VudGVuY2UgaW4gZW51bWVyYXRlKF9TRU5URU5DRV9TUExJVC5zcGxpdCh0ZXh0KSk6CiAgICAgICAgICAgIHNlbnRlbmNlID0gc2VudGVuY2Uuc3RyaXAoKQogICAgICAgICAgICBpZiBzZW50ZW5jZToKICAgICAgICAgICAgICAgIG91dC5hcHBlbmQoKHNlbnRlbmNlLCBnYXAgaWYgaSA9PSAwIGVsc2UgMC4wKSkKICAgIHJldHVybiBvdXQKCgpkZWYgcGFyYWdyYXBoc19mcm9tX3NlZ21lbnRzKHNlZ21lbnRzOiBsaXN0W2RpY3RdLAogICAgICAgICAgICAgICAgICAgICAgICAgICAgIHNvZnRfcGF1c2VfczogZmxvYXQgPSAxLjIsCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgbWluX3dvcmRzOiBpbnQgPSA1NSwKICAgICAgICAgICAgICAgICAgICAgICAgICAgICBoYXJkX21heF93b3JkczogaW50ID0gMTEwKSAtPiBsaXN0W3N0cl06CiAgICAiIiJHcm91cCBhIGhvbWlseSB0cmFuc2NyaXB0IGludG8gcmVhZGFibGUgcGFyYWdyYXBocy4KCiAgICBUaGUgb3JpZ2luYWwgcnVsZSBicm9rZSBhdCBzZWdtZW50IHN0YXJ0cyBvbiBhbnkgcGF1c2UgPj0gMS40cyBvcgogICAgYXQgOTAgd29yZHMgLSBpdCBjdXQgc2VudGVuY2VzIGluIGhhbGYgYW5kIHN0cmFuZGVkIGZyYWdtZW50cwogICAgKCJJdCBpcyB0aGVpciBuYXR1cmUuIiBhcyBpdHMgb3duIHBhcmFncmFwaCksIGJlY2F1c2UgYSBwcmVhY2hlcidzCiAgICBkcmFtYXRpYyBwYXVzZXMgYXJlIG5vdCBwYXJhZ3JhcGggYnJlYWtzIChyZWFsIGhvbWlseTogMjEgZ2FwcwogICAgPj0gMS40cywgbWVkaWFuIGdhcCAwLjQ2cywgYW5kIHNlZ21lbnRzIGVuZCBtaWQtc2VudGVuY2UgYW55d2F5KS4KCiAgICBOZXcgcnVsZTogc3BsaXQgaW50byBzZW50ZW5jZXMgZmlyc3QsIHRoZW4gYnJlYWsgT05MWSBiZXR3ZWVuCiAgICBzZW50ZW5jZXMgLSBvbmNlIHRoZSBwYXJhZ3JhcGggaG9sZHMgPj0gbWluX3dvcmRzLCBhdCBhIHJlYWwgcGF1c2UKICAgIG9uY2UgaXQgaG9sZHMgPj0gMjUgd29yZHMsIGFuZCBhbHdheXMgYnkgaGFyZF9tYXhfd29yZHMuIiIiCiAgICBwYXJhZ3JhcGhzOiBsaXN0W3N0cl0gPSBbXQogICAgY3VycmVudDogbGlzdFtzdHJdID0gW10KICAgIHdvcmRzID0gMAogICAgZm9yIHNlbnRlbmNlLCBnYXAgaW4gX3NlbnRlbmNlc193aXRoX2dhcHMoc2VnbWVudHMpOgogICAgICAgIGlmIGN1cnJlbnQgYW5kICgKICAgICAgICAgICAgd29yZHMgPj0gaGFyZF9tYXhfd29yZHMKICAgICAgICAgICAgb3Igd29yZHMgPj0gbWluX3dvcmRzCiAgICAgICAgICAgIG9yIChnYXAgPj0gc29mdF9wYXVzZV9zIGFuZCB3b3JkcyA+PSAyNSkKICAgICAgICApOgogICAgICAgICAgICBwYXJhZ3JhcGhzLmFwcGVuZCgiICIuam9pbihjdXJyZW50KS5zdHJpcCgpKQogICAgICAgICAgICBjdXJyZW50LCB3b3JkcyA9IFtdLCAwCiAgICAgICAgY3VycmVudC5hcHBlbmQoc2VudGVuY2UpCiAgICAgICAgd29yZHMgKz0gbGVuKHNlbnRlbmNlLnNwbGl0KCkpCiAgICBpZiBjdXJyZW50OgogICAgICAgIHBhcmFncmFwaHMuYXBwZW5kKCIgIi5qb2luKGN1cnJlbnQpLnN0cmlwKCkpCiAgICAjIENhcGl0YWxpemUgZWFjaCBwYXJhZ3JhcGgncyBmaXJzdCBsZXR0ZXI6IFdoaXNwZXIgb2Z0ZW4gcmVzdW1lcwogICAgIyBtaWQtZmxvdyBpbiBsb3dlcmNhc2UsIHdoaWNoIGxvb2tzIGxpa2UgYSB0eXBvIGluIHByaW50LgogICAgcmV0dXJuIFtwWzoxXS51cHBlcigpICsgcFsxOl0gZm9yIHAgaW4gcGFyYWdyYXBocyBpZiBwXQoKCmRlZiBkZXRlY3Rfc2NyaXB0dXJlX3JlZnModGV4dDogc3RyKSAtPiBsaXN0W3N0cl06CiAgICByZWZzID0gW10KICAgIGZvciBib29rIGluIEJPT0tTOgogICAgICAgICMgZS5nLiAiTWF0dGhldyAxOCIsICJTaXJhY2ggMjg6MiIsICIxIENvcmludGhpYW5zIDEzIgogICAgICAgIGZvciBtIGluIHJlLmZpbmRpdGVyKHJmIlxiKD86WzEyM11ccyspP3tib29rfVxzK1xkKyg/OjpcZCsoPzotXGQrKT8pPyIsIHRleHQpOgogICAgICAgICAgICByZWYgPSBtLmdyb3VwKDApCiAgICAgICAgICAgIGlmIHJlZiBub3QgaW4gcmVmczoKICAgICAgICAgICAgICAgIHJlZnMuYXBwZW5kKHJlZikKICAgIHJldHVybiByZWZzWzo0XQoKCmRlZiBfbGxtX3RpdGxlX2FuZF9oZWFkaW5ncyhzZXR0aW5nczogU2V0dGluZ3MsIHBhcmFncmFwaHM6IGxpc3Rbc3RyXSkgLT4gdHVwbGVbc3RyIHwgTm9uZSwgbGlzdFtzdHJdXToKICAgICIiIkFzayB0aGUgbG9jYWwgTExNIGZvciBhIHRpdGxlICsgYSBoZWFkaW5nIGJlZm9yZSBzb21lIHBhcmFncmFwaHMuCiAgICBSZXR1cm5zICh0aXRsZSwgaGVhZGluZ3MpIHdoZXJlIGhlYWRpbmdzW2ldIG1heSBiZSAnJyAobm8gaGVhZGluZykuIiIiCiAgICB0cnk6CiAgICAgICAgaW1wb3J0IHJlcXVlc3RzCgogICAgICAgIGJvZHkgPSAiXG5cbiIuam9pbihwYXJhZ3JhcGhzKQogICAgICAgIHByb21wdCA9ICgKICAgICAgICAgICAgIkZvcm1hdCB0aGlzIENhdGhvbGljIGhvbWlseSBhcyBhIGJsb2cgcG9zdC4gRG8gTk9UIHJld3JpdGUgaXQuXG4iCiAgICAgICAgICAgICJSZXBseSB3aXRoIE9OTFkgSlNPTjpcbiIKICAgICAgICAgICAgIntcInRpdGxlXCI6IFwiPHNob3J0IHRoZW1hdGljIHRpdGxlLCBubyBxdW90ZXM+XCIsICIKICAgICAgICAgICAgIlwiaGVhZGluZ3NcIjoge1wiPHBhcmFncmFwaCBudW1iZXIgc3RhcnRpbmcgYXQgMD5cIjogXCI8c2hvcnQgaGVhZGluZz5cIn19XG4iCiAgICAgICAgICAgICJHaXZlIDMtNSBoZWFkaW5ncyBhdCBtb3N0LCBhdCBuYXR1cmFsIHRvcGljIGNoYW5nZXMuXG5cbiIKICAgICAgICAgICAgKyAiXG5cbiIuam9pbihmIlt7aX1dIHtwfSIgZm9yIGksIHAgaW4gZW51bWVyYXRlKHBhcmFncmFwaHMpKQogICAgICAgICkKICAgICAgICByZXNwID0gcmVxdWVzdHMucG9zdCgKICAgICAgICAgICAgZiJ7c2V0dGluZ3Mub2xsYW1hX2hvc3R9L2FwaS9nZW5lcmF0ZSIsCiAgICAgICAgICAgIGpzb249eyJtb2RlbCI6IHNldHRpbmdzLm9sbGFtYV9tb2RlbCwgInByb21wdCI6IHByb21wdCwgInN0cmVhbSI6IEZhbHNlfSwKICAgICAgICAgICAgdGltZW91dD02MDAsCiAgICAgICAgKQogICAgICAgIHJlc3AucmFpc2VfZm9yX3N0YXR1cygpCiAgICAgICAgbWF0Y2ggPSByZS5zZWFyY2gociJcey4qXH0iLCByZXNwLmpzb24oKS5nZXQoInJlc3BvbnNlIiwgIiIpLCByZS5ET1RBTEwpCiAgICAgICAgaWYgbm90IG1hdGNoOgogICAgICAgICAgICByZXR1cm4gTm9uZSwgWyIiXSAqIGxlbihwYXJhZ3JhcGhzKQogICAgICAgIGRhdGEgPSBqc29uLmxvYWRzKG1hdGNoLmdyb3VwKDApKQogICAgICAgIGhlYWRpbmdzID0gWyIiXSAqIGxlbihwYXJhZ3JhcGhzKQogICAgICAgIGZvciBrZXksIHZhbHVlIGluIChkYXRhLmdldCgiaGVhZGluZ3MiKSBvciB7fSkuaXRlbXMoKToKICAgICAgICAgICAgaWR4ID0gaW50KGtleSkKICAgICAgICAgICAgaWYgMCA8PSBpZHggPCBsZW4oaGVhZGluZ3MpIGFuZCBzdHIodmFsdWUpLnN0cmlwKCk6CiAgICAgICAgICAgICAgICBoZWFkaW5nc1tpZHhdID0gc3RyKHZhbHVlKS5zdHJpcCgpCiAgICAgICAgdGl0bGUgPSBzdHIoZGF0YS5nZXQoInRpdGxlIikgb3IgIiIpLnN0cmlwKCkgb3IgTm9uZQogICAgICAgIF8gPSBib2R5CiAgICAgICAgcmV0dXJuIHRpdGxlLCBoZWFkaW5ncwogICAgZXhjZXB0IEV4Y2VwdGlvbjoKICAgICAgICByZXR1cm4gTm9uZSwgWyIiXSAqIGxlbihwYXJhZ3JhcGhzKQoKCmRlZiBmYWxsYmFja190aXRsZShzZXJ2aWNlX2RhdGU6IGRhdGUsIHNlcnZpY2Vfc3RhcnQ6IGRhdGV0aW1lIHwgTm9uZSA9IE5vbmUpIC0+IHN0cjoKICAgICIiIlRpdGxlIHVzZWQgd2hlbiBubyBMTE0gdGl0bGUgaXMgYXZhaWxhYmxlLgoKICAgIEluY2x1ZGVzIHRoZSBNYXNzIHRpbWUgd2hlbiBrbm93bjogd2l0aCB0aGUgTExNIG9mZiwgRVZFUlkgaG9taWx5CiAgICB1c2VkIHRvIGZhbGwgYmFjayB0byB0aGUgaWRlbnRpY2FsICJIb21pbHkgZm9yIDxkYXRlPiIsIHNvIGFsbCBvZiBhCiAgICBTdW5kYXkncyBzZXJ2aWNlcyBzaGFyZWQgb25lIHRpdGxlIChhbmQgb25lIHNsdWcpLiBUaGUgdGltZSBrZWVwcwogICAgc2FtZS1kYXkgdGl0bGVzIGRpc3RpbmN0IGFuZCB0ZWxscyBwYXJpc2hpb25lcnMgd2hpY2ggTWFzcyBpdCB3YXMuIiIiCiAgICBiYXNlID0gZiJIb21pbHkgZm9yIHtzZXJ2aWNlX2RhdGUuc3RyZnRpbWUoJyVCICVkLCAlWScpfSIKICAgIGlmIHNlcnZpY2Vfc3RhcnQgaXMgTm9uZToKICAgICAgICByZXR1cm4gYmFzZQogICAgcmV0dXJuIGYie2Jhc2V9IOKAlCB7c2VydmljZV9zdGFydC5zdHJmdGltZSgnJUk6JU0gJXAnKS5sc3RyaXAoJzAnKX0iCgoKZGVmIGJ1aWxkX2Jsb2dfcG9zdChzZXR0aW5nczogU2V0dGluZ3MsIHNlZ21lbnRzOiBsaXN0W2RpY3RdLAogICAgICAgICAgICAgICAgICAgIHNlcnZpY2VfZGF0ZTogZGF0ZSwgYXVkaW9fZmlsZW5hbWU6IHN0ciwKICAgICAgICAgICAgICAgICAgICBzZXJ2aWNlX3N0YXJ0OiBkYXRldGltZSB8IE5vbmUgPSBOb25lLAogICAgICAgICAgICAgICAgICAgIGNsZWFuZWRfcGFyYWdyYXBoczogbGlzdFtzdHJdIHwgTm9uZSA9IE5vbmUpIC0+IHR1cGxlW3N0ciwgZGljdF06CiAgICAiIiJSZXR1cm4gKG1hcmtkb3duX3RleHQsIG1ldGEpIGZvciBvbmUgaG9taWx5LiIiIgogICAgcGFyYWdyYXBocyA9IChjbGVhbmVkX3BhcmFncmFwaHMgaWYgY2xlYW5lZF9wYXJhZ3JhcGhzIGlzIG5vdCBOb25lCiAgICAgICAgICAgICAgICAgIGVsc2UgcGFyYWdyYXBoc19mcm9tX3NlZ21lbnRzKHNlZ21lbnRzKSkKICAgIGZ1bGxfdGV4dCA9ICIgIi5qb2luKHBhcmFncmFwaHMpCiAgICBzY3JpcHR1cmUgPSBkZXRlY3Rfc2NyaXB0dXJlX3JlZnMoZnVsbF90ZXh0KQoKICAgIHRpdGxlOiBzdHIgfCBOb25lID0gTm9uZQogICAgaGVhZGluZ3MgPSBbIiJdICogbGVuKHBhcmFncmFwaHMpCiAgICBpZiBzZXR0aW5ncy5lbmFibGVfb2xsYW1hOgogICAgICAgIHRpdGxlLCBoZWFkaW5ncyA9IF9sbG1fdGl0bGVfYW5kX2hlYWRpbmdzKHNldHRpbmdzLCBwYXJhZ3JhcGhzKQogICAgaWYgbm90IHRpdGxlOgogICAgICAgIHRpdGxlID0gZmFsbGJhY2tfdGl0bGUoc2VydmljZV9kYXRlLCBzZXJ2aWNlX3N0YXJ0KQoKICAgIHNsdWcgPSBzbHVnaWZ5KHRpdGxlKQogICAgZXhjZXJwdCA9ICIiCiAgICBmb3IgcCBpbiBwYXJhZ3JhcGhzOgogICAgICAgIHNlbnRlbmNlcyA9IHJlLnNwbGl0KHIiKD88PVsuIT9dKVxzKyIsIHApCiAgICAgICAgaWYgbGVuKHNlbnRlbmNlcykgPj0gMSBhbmQgbGVuKHNlbnRlbmNlc1swXSkgPiA0MDoKICAgICAgICAgICAgZXhjZXJwdCA9IHNlbnRlbmNlc1swXQogICAgICAgICAgICBicmVhawogICAgcHVsbF9xdW90ZSA9ICIiCiAgICBmb3IgcCBpbiBwYXJhZ3JhcGhzW2xlbihwYXJhZ3JhcGhzKSAvLyAzOl06CiAgICAgICAgZm9yIHNlbnRlbmNlIGluIHJlLnNwbGl0KHIiKD88PVsuIT9dKVxzKyIsIHApOgogICAgICAgICAgICBpZiA2MCA8PSBsZW4oc2VudGVuY2UpIDw9IDE4MDoKICAgICAgICAgICAgICAgIHB1bGxfcXVvdGUgPSBzZW50ZW5jZQogICAgICAgICAgICAgICAgYnJlYWsKICAgICAgICBpZiBwdWxsX3F1b3RlOgogICAgICAgICAgICBicmVhawoKICAgIG1ldGEgPSB7CiAgICAgICAgInRpdGxlIjogdGl0bGUsCiAgICAgICAgImRhdGUiOiBzZXJ2aWNlX2RhdGUuaXNvZm9ybWF0KCksCiAgICAgICAgImNodXJjaCI6IHNldHRpbmdzLmNodXJjaF9uYW1lLAogICAgICAgICJzY3JpcHR1cmUiOiBzY3JpcHR1cmUsCiAgICAgICAgInNsdWciOiBzbHVnLAogICAgICAgICJleGNlcnB0IjogZXhjZXJwdCwKICAgIH0KCiAgICBsaW5lcyA9IFsiLS0tIl0KICAgIGxpbmVzLmFwcGVuZChmInRpdGxlOiB7X3lhbWwodGl0bGUpfSIpCiAgICBsaW5lcy5hcHBlbmQoZiJkYXRlOiB7X3lhbWwoc2VydmljZV9kYXRlLmlzb2Zvcm1hdCgpKX0iKQogICAgbGluZXMuYXBwZW5kKGYiY2h1cmNoOiB7X3lhbWwoc2V0dGluZ3MuY2h1cmNoX25hbWUpfSIpCiAgICBpZiBzY3JpcHR1cmU6CiAgICAgICAgbGluZXMuYXBwZW5kKGYic2NyaXB0dXJlOiB7X3lhbWwoJywgJy5qb2luKHNjcmlwdHVyZSkpfSIpCiAgICBsaW5lcy5hcHBlbmQoZiJjYXRlZ29yeToge195YW1sKHNldHRpbmdzLmJsb2dfY2F0ZWdvcnkpfSIpCiAgICBsaW5lcy5hcHBlbmQoZiJzbHVnOiB7X3lhbWwoc2x1Zyl9IikKICAgIGxpbmVzLmFwcGVuZChmImV4Y2VycHQ6IHtfeWFtbChleGNlcnB0KX0iKQogICAgbGluZXMuYXBwZW5kKGYiYXVkaW86IHtfeWFtbChhdWRpb19maWxlbmFtZSl9IikKICAgIGxpbmVzLmFwcGVuZCgiLS0tIikKICAgIGxpbmVzLmFwcGVuZCgiIikKICAgIGxpbmVzLmFwcGVuZChmIiMge3RpdGxlfSIpCiAgICBsaW5lcy5hcHBlbmQoIiIpCiAgICBsaW5lcy5hcHBlbmQoZiIqe3NldHRpbmdzLmNodXJjaF9uYW1lfSB8IHtzZXJ2aWNlX2RhdGUuc3RyZnRpbWUoJyVCICVkLCAlWScpfSoiKQogICAgaWYgc2NyaXB0dXJlOgogICAgICAgIGxpbmVzLmFwcGVuZChmIipSZWFkaW5ncyByZWZlcmVuY2VkOiB7JywgJy5qb2luKHNjcmlwdHVyZSl9KiIpCiAgICBsaW5lcy5hcHBlbmQoIiIpCiAgICBpZiBwdWxsX3F1b3RlOgogICAgICAgIGxpbmVzLmFwcGVuZChmJz4gIntwdWxsX3F1b3RlfSInKQogICAgICAgIGxpbmVzLmFwcGVuZCgiIikKICAgIGZvciBpLCBwYXJhZ3JhcGggaW4gZW51bWVyYXRlKHBhcmFncmFwaHMpOgogICAgICAgIGlmIGhlYWRpbmdzW2ldOgogICAgICAgICAgICBsaW5lcy5hcHBlbmQoZiIjIyB7aGVhZGluZ3NbaV19IikKICAgICAgICAgICAgbGluZXMuYXBwZW5kKCIiKQogICAgICAgIGxpbmVzLmFwcGVuZChwYXJhZ3JhcGgpCiAgICAgICAgbGluZXMuYXBwZW5kKCIiKQogICAgbGluZXMuYXBwZW5kKCItLS0iKQogICAgbGluZXMuYXBwZW5kKCIiKQogICAgbGluZXMuYXBwZW5kKGYiKkxpc3RlbiB0byB0aGlzIGhvbWlseToge2F1ZGlvX2ZpbGVuYW1lfSoiKQogICAgbGluZXMuYXBwZW5kKCIiKQogICAgcmV0dXJuICJcbiIuam9pbihsaW5lcyksIG1ldGEK
+"""Format a cleaned homily transcript as a professional blog post.
+
+Light formatting only: the homilist's words are not rewritten. The
+formatting adds a title, metadata, short web paragraphs, a pull quote
+and (optionally, via the local LLM) subheadings. If no LLM title is
+available, the title falls back to "Homily for <date> — <Mass time>" -
+accurate and professional, never invented theology.
+"""
+from __future__ import annotations
+
+import json
+import re
+from datetime import date, datetime
+
+from config import Settings
+
+BOOKS = [
+    "Genesis", "Exodus", "Isaiah", "Jeremiah", "Ezekiel", "Daniel",
+    "Sirach", "Psalms", "Proverbs", "Wisdom",
+    "Matthew", "Mark", "Luke", "John", "Acts",
+    "Romans", "Corinthians", "Galatians", "Ephesians", "Philippians",
+    "Colossians", "Thessalonians", "Timothy", "Titus", "Hebrews",
+    "James", "Peter", "Revelation",
+]
+
+
+def _yaml(value: str) -> str:
+    """Quote a scalar for the front matter. Titles/excerpts come from a
+    local LLM or transcript text and may contain quotes - escape them so
+    the parish site's YAML parser does not break."""
+    return '"' + value.replace("\\", "\\\\").replace('"', '\\"') + '"'
+
+
+def slugify(text: str) -> str:
+    slug = re.sub(r"[^a-z0-9]+", "-", text.lower()).strip("-")
+    return slug or "homily"
+
+
+_SENTENCE_SPLIT = re.compile(r"(?<=[.!?…])\s+")
+
+_TERMINAL_PUNCT = re.compile(r"[.!?…][\"'”’)\]]*$")
+
+
+def _ends_with_terminal_punct(sentence: str) -> bool:
+    """True when a sentence ends on terminal punctuation (a trailing
+    closing quote or paren is allowed). A Whisper fragment that runs
+    on into the next segment has no terminal punctuation - breaking a
+    paragraph after it would split one sentence across paragraphs,
+    which is the defect in all 9 published posts (Nov 6 audit)."""
+    return bool(_TERMINAL_PUNCT.search(sentence.strip()))
+
+
+def _sentences_with_gaps(segments: list[dict]) -> list[tuple[str, float]]:
+    """Flatten segments into (sentence, gap_before_it) pairs.
+
+    Whisper packs several sentences into one segment and just as often
+    ends a segment mid-sentence, so sentence boundaries must be found
+    in the text itself, not at segment edges. A segment's pause gap is
+    attached to its first sentence; later sentences inherit 0."""
+    out: list[tuple[str, float]] = []
+    prev_end: float | None = None
+    for seg in segments:
+        text = seg["text"].strip()
+        if not text:
+            continue
+        gap = (seg["start"] - prev_end) if prev_end is not None else 0.0
+        prev_end = seg["end"]
+        for i, sentence in enumerate(_SENTENCE_SPLIT.split(text)):
+            sentence = sentence.strip()
+            if sentence:
+                out.append((sentence, gap if i == 0 else 0.0))
+    return out
+
+
+def paragraphs_from_segments(segments: list[dict],
+                             soft_pause_s: float = 1.2,
+                             min_words: int = 55,
+                             hard_max_words: int = 110) -> list[str]:
+    """Group a homily transcript into readable paragraphs.
+
+    The original rule broke at segment starts on any pause >= 1.4s or
+    at 90 words - it cut sentences in half and stranded fragments
+    ("It is their nature." as its own paragraph), because a preacher's
+    dramatic pauses are not paragraph breaks (real homily: 21 gaps
+    >= 1.4s, median gap 0.46s, and segments end mid-sentence anyway).
+
+    New rule: split into sentences first, then break ONLY between
+    sentences - once the paragraph holds >= min_words, at a real pause
+    once it holds >= 25 words, and always by hard_max_words. A break
+    is allowed only when the last sentence ends on terminal
+    punctuation: a fragment that runs on into the next segment must
+    merge on, never strand. The one exception is the safety valve -
+    at 2x hard_max_words the paragraph breaks anyway, so a long
+    unpunctuated stretch cannot grow without bound."""
+    paragraphs: list[str] = []
+    current: list[str] = []
+    words = 0
+    for sentence, gap in _sentences_with_gaps(segments):
+        if current and (
+            words >= 2 * hard_max_words
+            or (_ends_with_terminal_punct(current[-1]) and (
+                words >= hard_max_words
+                or words >= min_words
+                or (gap >= soft_pause_s and words >= 25)
+            ))
+        ):
+            paragraphs.append(" ".join(current).strip())
+            current, words = [], 0
+        current.append(sentence)
+        words += len(sentence.split())
+    if current:
+        paragraphs.append(" ".join(current).strip())
+    # Capitalize each paragraph's first letter: Whisper often resumes
+    # mid-flow in lowercase, which looks like a typo in print.
+    return [p[:1].upper() + p[1:] for p in paragraphs if p]
+
+
+def detect_scripture_refs(text: str) -> list[str]:
+    refs = []
+    for book in BOOKS:
+        # e.g. "Matthew 18", "Sirach 28:2", "1 Corinthians 13"
+        for m in re.finditer(rf"\b(?:[123]\s+)?{book}\s+\d+(?::\d+(?:-\d+)?)?", text):
+            ref = m.group(0)
+            if ref not in refs:
+                refs.append(ref)
+    return refs[:4]
+
+
+def _llm_title_and_headings(settings: Settings, paragraphs: list[str]) -> tuple[str | None, list[str]]:
+    """Ask the local LLM for a title + a heading before some paragraphs.
+    Returns (title, headings) where headings[i] may be '' (no heading)."""
+    try:
+        import requests
+
+        body = "\n\n".join(paragraphs)
+        prompt = (
+            "Format this Catholic homily as a blog post. Do NOT rewrite it.\n"
+            "Reply with ONLY JSON:\n"
+            "{\"title\": \"<short thematic title, no quotes>\", "
+            "\"headings\": {\"<paragraph number starting at 0>\": \"<short heading>\"}}\n"
+            "Give 3-5 headings at most, at natural topic changes.\n\n"
+            + "\n\n".join(f"[{i}] {p}" for i, p in enumerate(paragraphs))
+        )
+        resp = requests.post(
+            f"{settings.ollama_host}/api/generate",
+            json={"model": settings.ollama_model, "prompt": prompt, "stream": False},
+            timeout=600,
+        )
+        resp.raise_for_status()
+        match = re.search(r"\{.*\}", resp.json().get("response", ""), re.DOTALL)
+        if not match:
+            return None, [""] * len(paragraphs)
+        data = json.loads(match.group(0))
+        headings = [""] * len(paragraphs)
+        for key, value in (data.get("headings") or {}).items():
+            idx = int(key)
+            if 0 <= idx < len(headings) and str(value).strip():
+                headings[idx] = str(value).strip()
+        title = str(data.get("title") or "").strip() or None
+        _ = body
+        return title, headings
+    except Exception:
+        return None, [""] * len(paragraphs)
+
+
+def fallback_title(service_date: date, service_start: datetime | None = None) -> str:
+    """Title used when no LLM title is available.
+
+    Includes the Mass time when known: with the LLM off, EVERY homily
+    used to fall back to the identical "Homily for <date>", so all of a
+    Sunday's services shared one title (and one slug). The time keeps
+    same-day titles distinct and tells parishioners which Mass it was."""
+    base = f"Homily for {service_date.strftime('%B %d, %Y')}"
+    if service_start is None:
+        return base
+    return f"{base} — {service_start.strftime('%I:%M %p').lstrip('0')}"
+
+
+def _clean_quote_candidate(sentence: str) -> bool:
+    """A pull quote must read as a complete sentence: end on terminal
+    punctuation, have balanced double quotes, and not contain a word
+    repeated immediately (the garbled-join signature - e.g. the Nov 8
+    09:00 description's "perspective More, the highest perspective")."""
+    s = sentence.strip()
+    if not _ends_with_terminal_punct(s):
+        return False
+    if s.count('"') % 2 != 0:
+        return False
+    words = re.findall(r"[a-z0-9']+", s.lower())
+    return not any(a == b for a, b in zip(words, words[1:]))
+
+
+def build_blog_post(settings: Settings, segments: list[dict],
+                    service_date: date, audio_filename: str,
+                    service_start: datetime | None = None,
+                    cleaned_paragraphs: list[str] | None = None) -> tuple[str, dict]:
+    """Return (markdown_text, meta) for one homily."""
+    paragraphs = (cleaned_paragraphs if cleaned_paragraphs is not None
+                  else paragraphs_from_segments(segments))
+    full_text = " ".join(paragraphs)
+    # Scripture refs come from a regex over the transcript, not from
+    # the day's lectionary - with the LLM off they are guesses, and a
+    # wrong "Readings referenced" line (Nov 1 11:00 said John 16 for
+    # All Saints) is worse than no line at all.
+    scripture = detect_scripture_refs(full_text) if settings.enable_ollama else []
+
+    title: str | None = None
+    headings = [""] * len(paragraphs)
+    if settings.enable_ollama:
+        title, headings = _llm_title_and_headings(settings, paragraphs)
+    if not title:
+        title = fallback_title(service_date, service_start)
+
+    slug = slugify(title)
+    excerpt = ""
+    for p in paragraphs:
+        sentences = re.split(r"(?<=[.!?])\s+", p)
+        if len(sentences) >= 1 and len(sentences[0]) > 40:
+            excerpt = sentences[0]
+            break
+    pull_quote = ""
+    for p in paragraphs[len(paragraphs) // 3:]:
+        for sentence in re.split(r"(?<=[.!?])\s+", p):
+            sentence = sentence.strip()
+            if 60 <= len(sentence) <= 180 and _clean_quote_candidate(sentence):
+                pull_quote = sentence
+                break
+        if pull_quote:
+            break
+
+    meta = {
+        "title": title,
+        "date": service_date.isoformat(),
+        "church": settings.church_name,
+        "scripture": scripture,
+        "slug": slug,
+        "excerpt": excerpt,
+    }
+
+    lines = ["---"]
+    lines.append(f"title: {_yaml(title)}")
+    lines.append(f"date: {_yaml(service_date.isoformat())}")
+    lines.append(f"church: {_yaml(settings.church_name)}")
+    if scripture:
+        lines.append(f"scripture: {_yaml(', '.join(scripture))}")
+    lines.append(f"category: {_yaml(settings.blog_category)}")
+    lines.append(f"slug: {_yaml(slug)}")
+    lines.append(f"excerpt: {_yaml(excerpt)}")
+    lines.append(f"audio: {_yaml(audio_filename)}")
+    lines.append("---")
+    lines.append("")
+    lines.append(f"# {title}")
+    lines.append("")
+    lines.append(f"*{settings.church_name} | {service_date.strftime('%B %d, %Y')}*")
+    if scripture:
+        lines.append(f"*Readings referenced: {', '.join(scripture)}*")
+    lines.append("")
+    if pull_quote:
+        lines.append(f'> "{pull_quote}"')
+        lines.append("")
+    for i, paragraph in enumerate(paragraphs):
+        if headings[i]:
+            lines.append(f"## {headings[i]}")
+            lines.append("")
+        lines.append(paragraph)
+        lines.append("")
+    lines.append("---")
+    lines.append("")
+    lines.append(f"*Listen to this homily: {audio_filename}*")
+    lines.append("")
+    return "\n".join(lines), meta
